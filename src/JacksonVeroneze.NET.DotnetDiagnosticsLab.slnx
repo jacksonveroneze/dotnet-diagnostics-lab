@@ -1,0 +1,34 @@
+<Solution>
+  <Folder Name="/SolutionItems/">
+    <File Path="../.gitattributes" />
+    <File Path="../.gitignore" />
+    <File Path="../LICENSE" />
+    <File Path=".editorconfig" />
+    <File Path="AssemblyInfo.cs" />
+    <File Path="BannedSymbols.txt" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="nuget.config" />
+  </Folder>
+  <Folder Name="/SolutionItems/infra/" />
+  <Folder Name="/SolutionItems/infra/docker/">
+    <File Path="../infra/docker/.env" />
+    <File Path="../infra/docker/docker-compose.yml" />
+    <File Path=".dockerignore" />
+    <File Path="Dockerfile" />
+  </Folder>
+  <Folder Name="/SolutionItems/infra/docker/prometheus/">
+    <File Path="../infra/docker/prometheus/prometheus-config.yml" />
+  </Folder>
+  <Folder Name="/SolutionItems/infra/docker/traefik/">
+    <File Path="../infra/docker/certs/cert.crt" />
+    <File Path="../infra/docker/certs/cert.key" />
+    <File Path="../infra/docker/traefik/conf.yml" />
+  </Folder>
+  <Folder Name="/SolutionItems/tests/">
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="main/Api/Api.csproj" />
+  </Folder>
+</Solution>
