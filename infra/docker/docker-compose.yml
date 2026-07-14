@@ -1,0 +1,276 @@
+services:
+  load_balancer:
+    container_name: loadbalancer
+    image: traefik:v3.6
+    restart: unless-stopped
+    command:
+      # EntryPoints
+      - --entrypoints.http.address=:80
+
+      - --entrypoints.https.address=:443
+      - --entrypoints.https.http.tls=true
+
+      - --entrypoints.ping.address=:8081
+      - --entrypoints.metrics.address=:8082
+      - --entrypoints.traefik.address=:8083
+
+      # Providers 
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      
+      # API & Dashboard 
+      - --api.dashboard=true
+      - --api.insecure=false
+      
+      # Ping endpoint
+      - --ping=true
+      - --ping.entrypoint=ping
+      
+      # Observability 
+      - --log.level=INFO
+      - --accesslog=true
+      - --metrics.prometheus=true
+      - --metrics.prometheus.entrypoint=metrics
+      - --metrics.prometheus.addServicesLabels=true
+
+      # Timeouts
+      - --serversTransport.forwardingTimeouts.dialTimeout=10s
+      - --serversTransport.forwardingTimeouts.responseHeaderTimeout=10s
+      
+      # Load Balancing
+      - --providers.docker.defaultRule=Host(`localhost`)
+      
+      # Config
+      - --providers.file.filename=/etc/traefik/traefik_conf.yml
+    labels:
+      - traefik.enable=true
+      
+      # Dashboard
+      - traefik.http.routers.dashboard.rule=Host(`localhost`)
+      - traefik.http.routers.dashboard.entrypoints=traefik
+      - traefik.http.routers.dashboard.service=api@internal
+      - traefik.http.routers.dashboard.tls=true
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:8081/ping >/dev/null 2>&1 || exit 1" ]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    depends_on:
+      - api_rest
+      - api_grpc
+    ports:
+      - "8080:80"
+      - "8093:443"
+      - "127.0.0.1:8081:8081"
+      - "127.0.0.1:8082:8082"
+      - "127.0.0.1:8083:8083"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/etc/traefik/certs:ro
+      - ./traefik/config.yml:/etc/traefik/traefik_conf.yml:ro
+    networks:
+      - grpc-server-service-public
+      - grpc-server-service-internal
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "1m"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1024M
+        reservations:
+          cpus: '1'
+          memory: 512M
+
+  api_rest:
+    image: grpc-server-api:latest
+    restart: unless-stopped
+    build:
+      context: ../../src
+      dockerfile: ./Dockerfile
+    environment:
+      - DD_SERVICE=api_rest
+    env_file:
+      - .env
+    labels:
+      - traefik.enable=true
+
+      # Router configuration
+      - traefik.http.routers.api_service_rest.rule=PathPrefix(`/rest`)
+      - traefik.http.routers.api_service_rest.entrypoints=https
+      - traefik.http.routers.api_service_rest.tls=true
+
+      # Service configuration
+      - traefik.http.services.api_service_rest.loadbalancer.server.port=8081
+      - traefik.http.services.api_service_rest.loadbalancer.server.scheme=http
+      - traefik.http.services.api_service_rest.loadbalancer.passhostheader=true
+      - traefik.http.services.api_service_rest.loadbalancer.healthcheck.path=/health?source=traefik
+      - traefik.http.services.api_service_rest.loadbalancer.healthcheck.port=8081
+      - traefik.http.services.api_service_rest.loadbalancer.healthcheck.scheme=http
+      - traefik.http.services.api_service_rest.loadbalancer.healthcheck.interval=15s
+      - traefik.http.services.api_service_rest.loadbalancer.healthcheck.timeout=3s
+
+      # Middlewares definitions
+      - traefik.http.middlewares.strip-prefix.stripprefix.prefixes=/rest
+      - traefik.http.middlewares.compress.compress=true
+      - traefik.http.middlewares.rate-limit.ratelimit.average=100000
+      - traefik.http.middlewares.rate-limit.ratelimit.burst=5000
+      - traefik.http.middlewares.rate-limit.ratelimit.period=1s
+      - traefik.http.middlewares.circuit-breaker.circuitbreaker.expression=LatencyAtQuantileMS(95.0) > 5000
+
+      # Apply middlewares
+      - traefik.http.routers.api_service_rest.middlewares=strip-prefix,compress,rate-limit,circuit-breaker
+    networks:
+      - grpc-server-service-internal
+      - grpc-server-service-public
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "1m"
+    deploy:
+      replicas: 1
+      mode: replicated
+      resources:
+        limits:
+          cpus: '1'
+          memory: '1024M'
+        reservations:
+          cpus: '1'
+          memory: '1024M'
+
+  api_grpc:
+    image: grpc-server-api:latest
+    restart: unless-stopped
+    build:
+      context: ../../src
+      dockerfile: ./Dockerfile
+    environment:
+      - DD_SERVICE=api_grpc
+    env_file:
+      - .env
+    labels:
+      - traefik.enable=true
+
+      # Router configuration
+      - traefik.http.routers.api_service_grpc.rule=Host(`localhost`)
+      - traefik.http.routers.api_service_grpc.entrypoints=https
+      - traefik.http.routers.api_service_grpc.tls=true
+
+      # Service configuration
+      - traefik.http.services.api_service_grpc.loadbalancer.server.port=8080
+      - traefik.http.services.api_service_grpc.loadbalancer.server.scheme=h2c
+      - traefik.http.services.api_service_grpc.loadbalancer.passhostheader=true
+      - traefik.http.services.api_service_grpc.loadbalancer.healthcheck.path=/health?source=traefik
+      - traefik.http.services.api_service_grpc.loadbalancer.healthcheck.port=8081
+      - traefik.http.services.api_service_grpc.loadbalancer.healthcheck.scheme=http
+      - traefik.http.services.api_service_grpc.loadbalancer.healthcheck.interval=15s
+      - traefik.http.services.api_service_grpc.loadbalancer.healthcheck.timeout=3s
+
+      # Middlewares definitions
+      #      - traefik.http.middlewares.strip-prefix.stripprefix.prefixes=/grpc-server
+      - traefik.http.middlewares.compress.compress=true
+      - traefik.http.middlewares.rate-limit.ratelimit.average=100000
+      - traefik.http.middlewares.rate-limit.ratelimit.burst=5000
+      - traefik.http.middlewares.rate-limit.ratelimit.period=1s
+      - traefik.http.middlewares.circuit-breaker.circuitbreaker.expression=LatencyAtQuantileMS(95.0) > 5000
+
+      # Apply middlewares
+      - traefik.http.routers.api_service_grpc.middlewares=compress,rate-limit,circuit-breaker
+    networks:
+      - grpc-server-service-internal
+      - grpc-server-service-public
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "1m"
+    deploy:
+      replicas: 1
+      mode: replicated
+      resources:
+        limits:
+          cpus: '1'
+          memory: '1024M'
+        reservations:
+          cpus: '1'
+          memory: '1024M'
+  
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    ports:
+      - "19090:9090"
+    networks:
+      - grpc-server-service-public
+      - grpc-server-service-internal
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-lifecycle'
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:9090/-/ready >/dev/null 2>&1 || exit 1" ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    volumes:
+      - ./prometheus/prometheus-config.yml:/etc/prometheus/prometheus.yml
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "1m"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.50'
+          memory: 256M
+
+  datadog-agent:
+    container_name: datadog-agent
+    image: registry.datadoghq.com/agent:latest
+    restart: unless-stopped
+    environment:
+      - DD_API_KEY=xxx
+      - DD_SITE=us5.datadoghq.com
+      - DD_ENV=dev
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+      - DD_APM_IGNORE_RESOURCES="GET /health,GET /metrics,GET /metrics-open"
+    networks:
+      - grpc-server-service-public
+      - grpc-server-service-internal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "1m"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.50'
+          memory: 256M
+
+networks:
+  grpc-server-service-public:
+    driver: bridge
+  grpc-server-service-internal:
+    driver: bridge
+    internal: true

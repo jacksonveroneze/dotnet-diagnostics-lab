@@ -1,0 +1,5 @@
+# dynamic_conf.yml
+tls:
+  certificates:
+    - certFile: /etc/traefik/certs/cert.crt
+      keyFile: /etc/traefik/certs/cert.key
