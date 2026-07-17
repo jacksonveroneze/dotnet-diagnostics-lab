@@ -23,6 +23,7 @@ public static class AppServicesExtensions
 
         services.AddScoped<IThreadPoolStarvationService, ThreadPoolStarvationService>();
         services.AddScoped<IThreadLeakService, ThreadLeakService>();
+        services.AddScoped<ILockContentionService, LockContentionService>();
 
         services.AddScoped<IFibonacciService, FibonacciService>();
 

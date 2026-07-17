@@ -61,6 +61,7 @@ export default function (data) {
     // const url = `${BASE_URL}/diagnostics/v1/memory/leak-static`;
     // const url = `${BASE_URL}/diagnostics/v1/memory/loh-pressure?simulateType=${simulateType}`;
     // const url = `${BASE_URL}/diagnostics/v1/thread/thread-pool-starvation?delayMs=${delayMs}&taskCount=${taskCount}&simulateType=${simulateType}`;
+    // const url = `${BASE_URL}/diagnostics/v1/thread/lock-contention?delayMs=${delayMs}&taskCount=${taskCount}&simulateType=${simulateType}`;
     // const url = `${BASE_URL}/diagnostics/v1/cpu/fibonacci?n=${n}&simulateType=${simulateType}`;
     const url = `${BASE_URL}/diagnostics/v1/thread/thread-leak?delayMs=${delayMs}&taskCount=${taskCount}&simulateType=${simulateType}`;
 

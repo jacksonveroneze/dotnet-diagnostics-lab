@@ -28,7 +28,8 @@ internal static class ThreadEndpoint
                 .MapToApiVersion(Version);
 
         builder.AddThreadPoolStarvationEndpoint()
-            .AddThreadLeakEndpoint();
+            .AddThreadLeakEndpoint()
+            .AddLockContentionEndpoint();
 
         return app;
     }
@@ -62,6 +63,27 @@ internal static class ThreadEndpoint
                     [FromServices] IThreadLeakService service,
                     int delayMs = 100,
                     int taskCount = 100,
+                    SimulateType simulateType = SimulateType.Problem,
+                    CancellationToken cancellationToken = default) =>
+                {
+                    SimulationResult result = await service.RunAsync(
+                        delayMs, taskCount, simulateType,
+                        cancellationToken);
+
+                    return Results.Ok(result);
+                })
+                .Produces<SimulationResult>()
+                .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status500InternalServerError);
+            return builder;
+        }
+
+        private RouteGroupBuilder AddLockContentionEndpoint()
+        {
+            builder.MapGet("lock-contention", async (
+                    [FromServices] ILockContentionService service,
+                    int delayMs = 200,
+                    int taskCount = 6,
                     SimulateType simulateType = SimulateType.Problem,
                     CancellationToken cancellationToken = default) =>
                 {
