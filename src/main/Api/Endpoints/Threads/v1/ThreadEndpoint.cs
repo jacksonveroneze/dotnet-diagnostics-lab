@@ -39,14 +39,13 @@ internal static class ThreadEndpoint
         {
             builder.MapGet("thread-pool-starvation", async (
                     [FromServices] IThreadPoolStarvationService service,
-                    int iterations = 10_000,
                     int delayMs = 100,
-                    int taskCount = 100,
+                    int taskCount = 2,
                     SimulateType simulateType = SimulateType.Problem,
                     CancellationToken cancellationToken = default) =>
                 {
                     SimulationResult result = await service.RunAsync(
-                        iterations, delayMs, taskCount, simulateType,
+                        delayMs, taskCount, simulateType,
                         cancellationToken);
 
                     return Results.Ok(result);
