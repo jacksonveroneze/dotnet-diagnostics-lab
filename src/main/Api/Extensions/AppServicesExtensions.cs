@@ -1,8 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services;
+using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Cpu;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Thread;
 using JacksonVeroneze.NET.GRPCServer.Api.Services;
+using JacksonVeroneze.NET.GRPCServer.Api.Services.Cpu;
 using JacksonVeroneze.NET.GRPCServer.Api.Services.Memory;
 using JacksonVeroneze.NET.GRPCServer.Api.Services.Threads;
 
@@ -20,6 +22,8 @@ public static class AppServicesExtensions
 
         services.AddScoped<IThreadPoolStarvationService, ThreadPoolStarvationService>();
         services.AddScoped<IThreadLeakService, ThreadLeakService>();
+
+        services.AddScoped<IFibonacciService, FibonacciService>();
 
         return services;
     }

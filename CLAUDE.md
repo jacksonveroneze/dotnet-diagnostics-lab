@@ -94,7 +94,7 @@ Não crie projetos, pastas ou camadas sem responsabilidade clara.
 - Use file-scoped namespaces e braces em blocos de controle.
 - Respeite limite de linha de 120 caracteres.
 - Prefira tipo explícito em vez de `var`, conforme `.editorconfig`.
-- Use nomes claros e orientados à intenção.
+- Use nomes claros e orientados à intenção. Evite usar letras para variáveis, parâmetros.
 - Use guard clauses para entradas inválidas.
 - Prefira imutabilidade quando fizer sentido.
 - Use `record` para dados imutáveis simples.
