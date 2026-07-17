@@ -19,6 +19,7 @@ public static class AppServicesExtensions
         services.AddScoped<IGen2PromotionService, Gen2PromotionService>();
         services.AddSingleton<IMemoryLeakStaticService, MemoryLeakStaticService>();
         services.AddScoped<IStringAllocationService, StringAllocationService>();
+        services.AddScoped<ILohPressureService, LohPressureService>();
 
         services.AddScoped<IThreadPoolStarvationService, ThreadPoolStarvationService>();
         services.AddScoped<IThreadLeakService, ThreadLeakService>();

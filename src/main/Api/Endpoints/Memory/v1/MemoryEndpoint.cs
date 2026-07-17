@@ -29,7 +29,8 @@ internal static class MemoryEndpoint
 
         builder.AddStringAllocationEndpoint()
             .AddStaticLeakEndpoint()
-            .AddGen2PromotionEndpoint();
+            .AddGen2PromotionEndpoint()
+            .AddLohPressureEndpoint();
 
         return app;
     }
@@ -84,6 +85,27 @@ internal static class MemoryEndpoint
                     [FromServices] IGen2PromotionService service,
                     int objectCount = 1_000,
                     int objectSizeBytes = 10_000,
+                    SimulateType simulateType = SimulateType.Problem,
+                    CancellationToken cancellationToken = default) =>
+                {
+                    SimulationResult result = service.Run(
+                        objectCount, objectSizeBytes, simulateType,
+                        cancellationToken);
+
+                    return Results.Ok(result);
+                })
+                .Produces<SimulationResult>()
+                .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status500InternalServerError);
+            return builder;
+        }
+
+        private RouteGroupBuilder AddLohPressureEndpoint()
+        {
+            builder.MapGet("loh-pressure", (
+                    [FromServices] ILohPressureService service,
+                    int objectCount = 200,
+                    int objectSizeBytes = 100_000,
                     SimulateType simulateType = SimulateType.Problem,
                     CancellationToken cancellationToken = default) =>
                 {
