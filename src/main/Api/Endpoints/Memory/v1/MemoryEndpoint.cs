@@ -61,15 +61,19 @@ internal static class MemoryEndpoint
         {
             builder.MapGet("leak-static", (
                     [FromServices] IMemoryLeakStaticService service,
-                    CancellationToken cancellationToken) =>
+                    int objectCount = 1_000,
+                    int objectSizeBytes = 10_000,
+                    SimulateType simulateType = SimulateType.Problem,
+                    CancellationToken cancellationToken = default) =>
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    var result = service.Run();
+                    SimulationResult result = service.Run(
+                        objectCount, objectSizeBytes, simulateType,
+                        cancellationToken);
 
                     return Results.Ok(result);
                 })
                 .Produces<SimulationResult>()
+                .Produces(StatusCodes.Status400BadRequest)
                 .Produces(StatusCodes.Status500InternalServerError);
             return builder;
         }
