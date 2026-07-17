@@ -32,7 +32,6 @@ internal static class WebApplicationBuilderExtensions
                 .AddJsonOptionsSerialize()
                 .AddAppVersioning()
                 .AddRouting()
-                .AddCorrelation()
                 .AddApplicationServices()
                 .AddOpenTelemetry(appConfiguration)
                 .AddHealthChecks();

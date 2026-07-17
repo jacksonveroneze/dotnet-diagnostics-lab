@@ -6,9 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Http"/>
-    <PackageReference Include="CorrelationId"/>
     <PackageReference Include="Scalar.AspNetCore"/>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
 
     <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore"/>
     <PackageReference Include="OpenTelemetry.Extensions.Hosting"/>
@@ -16,10 +14,13 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Http"/>
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime"/>
     <PackageReference Include="OpenTelemetry.Instrumentation.Process"/>
+
     <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Settings.Configuration"/>
+
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
 
-    <PackageReference Include="Serilog.Settings.Configuration"/>
   </ItemGroup>
 
 </Project>

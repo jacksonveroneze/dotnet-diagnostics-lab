@@ -1,4 +1,3 @@
-using CorrelationId;
 using JacksonVeroneze.NET.GRPCServer.Api.Endpoints.Cpu.v1;
 using JacksonVeroneze.NET.GRPCServer.Api.Endpoints.Memory.v1;
 using JacksonVeroneze.NET.GRPCServer.Api.Endpoints.Thread.v1;
@@ -16,8 +15,6 @@ internal static class WebApplicationExtensions
     {
         ArgumentNullException.ThrowIfNull(app);
 
-        app.UseCorrelationId();
-        
         app.UseExceptionHandler();
         app.UseStatusCodePages();
         

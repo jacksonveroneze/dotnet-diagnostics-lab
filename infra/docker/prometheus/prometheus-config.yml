@@ -16,8 +16,15 @@ scrape_configs:
   - job_name: api
     honor_timestamps: true
     metrics_path: /metrics
-    enable_http2: false
+    scheme: http
     dns_sd_configs:
       - names: [ "api" ]
         type: "A"
-        port: 8081
+        port: 8080
+        
+  - job_name: "monitor"
+    honor_timestamps: true
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      - targets: ["monitor:52323"]
