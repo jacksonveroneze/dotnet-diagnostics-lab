@@ -16,7 +16,7 @@ internal static class WebApplicationBuilderExtensions
 
             builder.ConfigureDefaultServices(appConfiguration);
 
-            builder.AddLogger(appConfiguration);
+            //builder.AddLogger(appConfiguration);
 
             return builder;
         }
@@ -24,6 +24,8 @@ internal static class WebApplicationBuilderExtensions
         private void ConfigureDefaultServices(
             AppConfiguration appConfiguration)
         {
+            builder.Services.AddHybridCache();
+            
             builder.Services
                 .AddProblemDetails()
                 .AddExceptionHandler<CustomExceptionHandler>()

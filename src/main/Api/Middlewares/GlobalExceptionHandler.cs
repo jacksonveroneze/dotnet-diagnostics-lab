@@ -13,6 +13,14 @@ internal sealed class CustomExceptionHandler(
     {
         const int defaultStatus = StatusCodes.Status500InternalServerError;
 
+        var status = exception switch
+        {
+            ArgumentException => StatusCodes.Status400BadRequest,
+            _ => defaultStatus,
+        };
+
+        httpContext.Response.StatusCode = status;
+
         ProblemDetailsContext problemDetailsCtx = new()
         {
             Exception = exception,
@@ -22,11 +30,7 @@ internal sealed class CustomExceptionHandler(
                 Title = "An error occurred",
                 Detail = exception.Message,
                 Type = exception.GetType().Name,
-                Status = exception switch
-                {
-                    ArgumentException => StatusCodes.Status400BadRequest,
-                    _ => defaultStatus,
-                },
+                Status = status,
             },
         };
 

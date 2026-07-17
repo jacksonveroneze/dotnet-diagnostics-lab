@@ -17,6 +17,7 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime"/>
     <PackageReference Include="OpenTelemetry.Instrumentation.Process"/>
     <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
 
     <PackageReference Include="Serilog.Settings.Configuration"/>
   </ItemGroup>

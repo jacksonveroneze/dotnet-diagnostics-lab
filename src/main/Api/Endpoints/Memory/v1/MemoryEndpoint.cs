@@ -1,5 +1,7 @@
 using Asp.Versioning;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services;
+using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
+using JacksonVeroneze.NET.GRPCServer.Api.Enums;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +22,7 @@ internal static class MemoryEndpoint
             .Build();
 
         RouteGroupBuilder builder =
-            app.MapGroup("disgnostics/v{version:apiVersion}/" + Resource)
+            app.MapGroup("diagnostics/v{version:apiVersion}/" + Resource)
                 .WithTags(Resource)
                 .WithApiVersionSet(apiVersion)
                 .MapToApiVersion(Version);
@@ -37,16 +39,20 @@ internal static class MemoryEndpoint
         private RouteGroupBuilder AddStringAllocationEndpoint()
         {
             builder.MapGet("string-allocation", (
-                    [FromServices] IMemoryStringAllocation service,
-                    CancellationToken cancellationToken) =>
+                    [FromServices] IStringAllocationService service,
+                    int iterations = 10_000,
+                    int stringLength = 1_000,
+                    SimulateType simulateType = SimulateType.Problem,
+                    CancellationToken cancellationToken = default) =>
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    var result = service.Run();
+                    SimulationResult result = service.Run(
+                        iterations, stringLength, simulateType,
+                        cancellationToken);
 
                     return Results.Ok(result);
                 })
                 .Produces<SimulationResult>()
+                .Produces(StatusCodes.Status400BadRequest)
                 .Produces(StatusCodes.Status500InternalServerError);
             return builder;
         }
@@ -54,7 +60,7 @@ internal static class MemoryEndpoint
         private RouteGroupBuilder AddStaticLeakEndpoint()
         {
             builder.MapGet("leak-static", (
-                    [FromServices] IMemoryLeakStatic service,
+                    [FromServices] IMemoryLeakStaticService service,
                     CancellationToken cancellationToken) =>
                 {
                     cancellationToken.ThrowIfCancellationRequested();
@@ -71,7 +77,7 @@ internal static class MemoryEndpoint
         private RouteGroupBuilder AddGen2PromotionEndpoint()
         {
             builder.MapGet("gen2-promotion", (
-                    [FromServices] IMemoryG2PromotionService service,
+                    [FromServices] IGenPromotionService service,
                     CancellationToken cancellationToken) =>
                 {
                     cancellationToken.ThrowIfCancellationRequested();

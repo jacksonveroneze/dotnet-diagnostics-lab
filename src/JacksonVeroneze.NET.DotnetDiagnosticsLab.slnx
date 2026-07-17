@@ -3,6 +3,7 @@
     <File Path="../.gitattributes" />
     <File Path="../.gitignore" />
     <File Path="../LICENSE" />
+    <File Path="..\CLAUDE.md" />
     <File Path=".editorconfig" />
     <File Path="AssemblyInfo.cs" />
     <File Path="BannedSymbols.txt" />
@@ -27,6 +28,10 @@
     <File Path="../infra/docker/traefik/conf.yml" />
   </Folder>
   <Folder Name="/SolutionItems/tests/">
+    <File Path="..\tests\k6-run.sh" />
+    <File Path="..\tests\k6.env" />
+    <File Path="..\tests\test-endpoints.js" />
+    <File Path="..\tests\util.js" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="main/Api/Api.csproj" />
