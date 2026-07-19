@@ -1,6 +1,6 @@
 using JacksonVeroneze.NET.GRPCServer.Api.Endpoints.Cpu.v1;
 using JacksonVeroneze.NET.GRPCServer.Api.Endpoints.Memory.v1;
-using JacksonVeroneze.NET.GRPCServer.Api.Endpoints.Thread.v1;
+using JacksonVeroneze.NET.GRPCServer.Api.Endpoints.Threads.v1;
 using Scalar.AspNetCore;
 
 namespace JacksonVeroneze.NET.GRPCServer.Api.Extensions;

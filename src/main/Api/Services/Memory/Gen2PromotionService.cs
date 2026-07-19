@@ -12,10 +12,8 @@ public class Gen2PromotionService : IGen2PromotionService
 
     public SimulationResult Run(
         int objectCount,
-        int objectSizeBytes,
-        CancellationToken cancellationToken)
+        int objectSizeBytes)
     {
-        cancellationToken.ThrowIfCancellationRequested();
         ArgumentOutOfRangeException.ThrowIfLessThan(objectCount, 1);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(objectCount, MaxObjectCount);
         ArgumentOutOfRangeException.ThrowIfLessThan(objectSizeBytes, 1);
@@ -27,7 +25,7 @@ public class Gen2PromotionService : IGen2PromotionService
 
         var stopwatch = Stopwatch.StartNew();
 
-        RunWithPromotion(objectCount, objectSizeBytes, cancellationToken);
+        RunWithPromotion(objectCount, objectSizeBytes);
 
         stopwatch.Stop();
 
@@ -45,18 +43,12 @@ public class Gen2PromotionService : IGen2PromotionService
 
     private static void RunWithPromotion(
         int objectCount,
-        int objectSizeBytes,
-        CancellationToken cancellationToken)
+        int objectSizeBytes)
     {
-        // kept reachable for the whole loop: survives the intermediate Gen0/Gen1
-        // collections triggered by the allocations below, so the GC promotes it
-        // to Gen2 (mid-life crisis) even though it becomes garbage right after.
         List<byte[]> survivors = new(objectCount);
 
         for (var i = 0; i < objectCount; i++)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             survivors.Add(new byte[objectSizeBytes]);
         }
     }

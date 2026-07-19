@@ -12,10 +12,8 @@ public class StringAllocationService : IStringAllocationService
 
     public SimulationResult Run(
         int iterations,
-        int stringLength,
-        CancellationToken cancellationToken)
+        int stringLength)
     {
-        cancellationToken.ThrowIfCancellationRequested();
         ArgumentOutOfRangeException.ThrowIfLessThan(iterations, 1);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(iterations, MaxIterations);
         ArgumentOutOfRangeException.ThrowIfLessThan(stringLength, 1);
@@ -28,7 +26,7 @@ public class StringAllocationService : IStringAllocationService
 
         var stopwatch = Stopwatch.StartNew();
 
-        RunWithConcatenation(iterations, chunk, cancellationToken);
+        RunWithConcatenation(iterations, chunk);
 
         stopwatch.Stop();
 
@@ -46,14 +44,12 @@ public class StringAllocationService : IStringAllocationService
 
     private static void RunWithConcatenation(
         int iterations,
-        string chunk,
-        CancellationToken cancellationToken)
+        string chunk)
     {
         var acc = string.Empty;
 
         for (var i = 0; i < iterations; i++)
         {
-            cancellationToken.ThrowIfCancellationRequested();
             acc += chunk;
         }
     }

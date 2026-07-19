@@ -6,6 +6,5 @@ public interface IMemoryLeakStaticService
 {
     public SimulationResult Run(
         int objectCount,
-        int objectSizeBytes,
-        CancellationToken cancellationToken);
+        int objectSizeBytes);
 }

@@ -6,6 +6,5 @@ public interface IStringAllocationService
 {
     SimulationResult Run(
         int iterations,
-        int stringLength,
-        CancellationToken cancellationToken);
+        int stringLength);
 }

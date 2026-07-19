@@ -6,6 +6,5 @@ public interface ILohPressureService
 {
     public SimulationResult Run(
         int objectCount,
-        int objectSizeBytes,
-        CancellationToken cancellationToken);
+        int objectSizeBytes);
 }

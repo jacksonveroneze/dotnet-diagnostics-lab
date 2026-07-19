@@ -1,10 +1,9 @@
 using Asp.Versioning;
-using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Thread;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Endpoints.Thread.v1;
+namespace JacksonVeroneze.NET.GRPCServer.Api.Endpoints.Threads.v1;
 
 internal static class ThreadEndpoint
 {

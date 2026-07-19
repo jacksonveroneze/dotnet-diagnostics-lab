@@ -1,5 +1,4 @@
 using Asp.Versioning;
-using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -41,12 +40,10 @@ internal static class MemoryEndpoint
             builder.MapGet("string-allocation", (
                     [FromServices] IStringAllocationService service,
                     int iterations = 10_000,
-                    int stringLength = 1_000,
-                    CancellationToken cancellationToken = default) =>
+                    int stringLength = 1_000) =>
                 {
                     SimulationResult result = service.Run(
-                        iterations, stringLength,
-                        cancellationToken);
+                        iterations, stringLength);
 
                     return Results.Ok(result);
                 })
@@ -61,13 +58,10 @@ internal static class MemoryEndpoint
             builder.MapGet("leak-static", (
                     [FromServices] IMemoryLeakStaticService service,
                     int objectCount = 1_000,
-                    int objectSizeBytes = 10_000,
-                    CancellationToken cancellationToken = default) =>
+                    int objectSizeBytes = 10_000) =>
                 {
                     SimulationResult result = service.Run(
-                        objectCount, objectSizeBytes,
-                        cancellationToken);
-
+                        objectCount, objectSizeBytes);
                     return Results.Ok(result);
                 })
                 .Produces<SimulationResult>()
@@ -81,12 +75,10 @@ internal static class MemoryEndpoint
             builder.MapGet("gen2-promotion", (
                     [FromServices] IGen2PromotionService service,
                     int objectCount = 1_000,
-                    int objectSizeBytes = 10_000,
-                    CancellationToken cancellationToken = default) =>
+                    int objectSizeBytes = 10_000) =>
                 {
                     SimulationResult result = service.Run(
-                        objectCount, objectSizeBytes,
-                        cancellationToken);
+                        objectCount, objectSizeBytes);
 
                     return Results.Ok(result);
                 })
@@ -101,12 +93,10 @@ internal static class MemoryEndpoint
             builder.MapGet("loh-pressure", (
                     [FromServices] ILohPressureService service,
                     int objectCount = 200,
-                    int objectSizeBytes = 100_000,
-                    CancellationToken cancellationToken = default) =>
+                    int objectSizeBytes = 100_000) =>
                 {
                     SimulationResult result = service.Run(
-                        objectCount, objectSizeBytes,
-                        cancellationToken);
+                        objectCount, objectSizeBytes);
 
                     return Results.Ok(result);
                 })

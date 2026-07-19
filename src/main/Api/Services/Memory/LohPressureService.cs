@@ -15,10 +15,8 @@ public class LohPressureService : ILohPressureService
 
     public SimulationResult Run(
         int objectCount,
-        int objectSizeBytes,
-        CancellationToken cancellationToken)
+        int objectSizeBytes)
     {
-        cancellationToken.ThrowIfCancellationRequested();
         ArgumentOutOfRangeException.ThrowIfLessThan(objectCount, 1);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(objectCount, MaxObjectCount);
         ArgumentOutOfRangeException.ThrowIfLessThan(objectSizeBytes, MinObjectSizeBytes);
@@ -30,7 +28,7 @@ public class LohPressureService : ILohPressureService
 
         var stopwatch = Stopwatch.StartNew();
 
-        RunWithFragmentation(objectCount, objectSizeBytes, cancellationToken);
+        RunWithFragmentation(objectCount, objectSizeBytes);
 
         stopwatch.Stop();
 
@@ -48,8 +46,7 @@ public class LohPressureService : ILohPressureService
 
     private static void RunWithFragmentation(
         int objectCount,
-        int objectSizeBytes,
-        CancellationToken cancellationToken)
+        int objectSizeBytes)
     {
         // keeps every other object alive while varying the allocated size, so the
         // LOH slots freed by the discarded objects sit between different-sized
@@ -59,8 +56,6 @@ public class LohPressureService : ILohPressureService
 
         for (var objectIndex = 0; objectIndex < objectCount; objectIndex++)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             var currentSizeBytes = objectIndex % 2 == 0
                 ? objectSizeBytes
                 : objectSizeBytes * 3 / 4;

@@ -6,6 +6,5 @@ public interface IGen2PromotionService
 {
     public SimulationResult Run(
         int objectCount,
-        int objectSizeBytes,
-        CancellationToken cancellationToken);
+        int objectSizeBytes);
 }

@@ -16,10 +16,8 @@ public class MemoryLeakStaticService : IMemoryLeakStaticService
 
     public SimulationResult Run(
         int objectCount,
-        int objectSizeBytes,
-        CancellationToken cancellationToken)
+        int objectSizeBytes)
     {
-        cancellationToken.ThrowIfCancellationRequested();
         ArgumentOutOfRangeException.ThrowIfLessThan(objectCount, 1);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(objectCount, MaxObjectCount);
         ArgumentOutOfRangeException.ThrowIfLessThan(objectSizeBytes, 1);
@@ -31,7 +29,7 @@ public class MemoryLeakStaticService : IMemoryLeakStaticService
 
         var stopwatch = Stopwatch.StartNew();
 
-        RunLeaking(objectCount, objectSizeBytes, cancellationToken);
+        RunLeaking(objectCount, objectSizeBytes);
 
         stopwatch.Stop();
 
@@ -49,13 +47,10 @@ public class MemoryLeakStaticService : IMemoryLeakStaticService
 
     private static void RunLeaking(
         int objectCount,
-        int objectSizeBytes,
-        CancellationToken cancellationToken)
+        int objectSizeBytes)
     {
         for (var i = 0; i < objectCount; i++)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             lock (LeakedObjectsLock)
             {
                 LeakedObjects.Add(new byte[objectSizeBytes]);
