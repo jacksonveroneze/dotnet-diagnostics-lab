@@ -5,55 +5,54 @@ import {factoryHeaders} from "./util.js";
 const BASE_URL = __ENV.BASE_URL || "http://localhost:8080/dotnet-diagnostics-lab";
 const READ_TIMEOUT = __ENV.READ_TIMEOUT || "10s";
 const TEST_TYPE = __ENV.TEST_TYPE;
-const SIMULATE_TYPE = __ENV.SIMULATE_TYPE || "Problem";
 
 const SCENARIOS = {
     "string-allocation": () => {
         const iterations = 100;
         const stringLength = 1000;
 
-        return `${BASE_URL}/diagnostics/v1/memory/string-allocation?iterations=${iterations}&stringLength=${stringLength}&simulateType=${SIMULATE_TYPE}`;
+        return `${BASE_URL}/diagnostics/v1/memory/string-allocation?iterations=${iterations}&stringLength=${stringLength}`;
     },
     "leak-static": () => {
         const objectCount = 1000;
         const objectSizeBytes = 1000;
 
-        return `${BASE_URL}/diagnostics/v1/memory/leak-static?objectCount=${objectCount}&objectSizeBytes=${objectSizeBytes}&simulateType=${SIMULATE_TYPE}`;
+        return `${BASE_URL}/diagnostics/v1/memory/leak-static?objectCount=${objectCount}&objectSizeBytes=${objectSizeBytes}`;
     },
     "gen2-promotion": () => {
         const objectCount = 1000;
         const objectSizeBytes = 10000;
 
-        return `${BASE_URL}/diagnostics/v1/memory/gen2-promotion?objectCount=${objectCount}&objectSizeBytes=${objectSizeBytes}&simulateType=${SIMULATE_TYPE}`;
+        return `${BASE_URL}/diagnostics/v1/memory/gen2-promotion?objectCount=${objectCount}&objectSizeBytes=${objectSizeBytes}`;
     },
     "loh-pressure": () => {
         const objectCount = 200;
         const objectSizeBytes = 100000;
 
-        return `${BASE_URL}/diagnostics/v1/memory/loh-pressure?objectCount=${objectCount}&objectSizeBytes=${objectSizeBytes}&simulateType=${SIMULATE_TYPE}`;
+        return `${BASE_URL}/diagnostics/v1/memory/loh-pressure?objectCount=${objectCount}&objectSizeBytes=${objectSizeBytes}`;
     },
     "thread-pool-starvation": () => {
         const delayMs = 10000;
         const taskCount = 2;
 
-        return `${BASE_URL}/diagnostics/v1/thread/thread-pool-starvation?delayMs=${delayMs}&taskCount=${taskCount}&simulateType=${SIMULATE_TYPE}`;
+        return `${BASE_URL}/diagnostics/v1/thread/thread-pool-starvation?delayMs=${delayMs}&taskCount=${taskCount}`;
     },
     "thread-leak": () => {
         const delayMs = 10000;
         const taskCount = 2;
 
-        return `${BASE_URL}/diagnostics/v1/thread/thread-leak?delayMs=${delayMs}&taskCount=${taskCount}&simulateType=${SIMULATE_TYPE}`;
+        return `${BASE_URL}/diagnostics/v1/thread/thread-leak?delayMs=${delayMs}&taskCount=${taskCount}`;
     },
     "lock-contention": () => {
         const delayMs = 10000;
         const taskCount = 2;
 
-        return `${BASE_URL}/diagnostics/v1/thread/lock-contention?delayMs=${delayMs}&taskCount=${taskCount}&simulateType=${SIMULATE_TYPE}`;
+        return `${BASE_URL}/diagnostics/v1/thread/lock-contention?delayMs=${delayMs}&taskCount=${taskCount}`;
     },
     "fibonacci": () => {
         const n = 32;
 
-        return `${BASE_URL}/diagnostics/v1/cpu/fibonacci?n=${n}&simulateType=${SIMULATE_TYPE}`;
+        return `${BASE_URL}/diagnostics/v1/cpu/fibonacci?n=${n}`;
     },
 };
 

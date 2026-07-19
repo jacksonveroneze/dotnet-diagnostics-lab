@@ -1,7 +1,5 @@
-using System.Buffers;
 using System.Diagnostics;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
-using JacksonVeroneze.NET.GRPCServer.Api.Enums;
 using JacksonVeroneze.NET.GRPCServer.Api.Helpers;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
 
@@ -18,7 +16,6 @@ public class LohPressureService : ILohPressureService
     public SimulationResult Run(
         int objectCount,
         int objectSizeBytes,
-        SimulateType simulateType,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -33,14 +30,7 @@ public class LohPressureService : ILohPressureService
 
         var stopwatch = Stopwatch.StartNew();
 
-        if (simulateType == SimulateType.Success)
-        {
-            RunWithPooling(objectCount, objectSizeBytes, cancellationToken);
-        }
-        else
-        {
-            RunWithFragmentation(objectCount, objectSizeBytes, cancellationToken);
-        }
+        RunWithFragmentation(objectCount, objectSizeBytes, cancellationToken);
 
         stopwatch.Stop();
 
@@ -81,28 +71,6 @@ public class LohPressureService : ILohPressureService
             if (objectIndex % 2 == 0)
             {
                 retained.Add(buffer);
-            }
-        }
-    }
-
-    private static void RunWithPooling(
-        int objectCount,
-        int objectSizeBytes,
-        CancellationToken cancellationToken)
-    {
-        for (var objectIndex = 0; objectIndex < objectCount; objectIndex++)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var buffer = ArrayPool<byte>.Shared.Rent(objectSizeBytes);
-
-            try
-            {
-                buffer[0] = 1;
-            }
-            finally
-            {
-                ArrayPool<byte>.Shared.Return(buffer);
             }
         }
     }

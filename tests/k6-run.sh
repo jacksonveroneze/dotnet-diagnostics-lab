@@ -16,12 +16,10 @@ readonly TEST_TYPES=(
 )
 
 usage() {
-  echo "Usage: $0 [test-type] [simulateType]"
+  echo "Usage: $0 [test-type]"
   echo
   echo "Available test types:"
   printf '  - %s\n' "${TEST_TYPES[@]}"
-  echo
-  echo "simulateType: Problem (default) | Success"
   echo
   echo "Run without arguments for an interactive menu."
 }
@@ -61,18 +59,6 @@ elif ! is_valid_type "$test_type"; then
   exit 1
 fi
 
-simulate_type="${2:-}"
-
-if [[ -z "$simulate_type" ]]; then
-  read -rp "SimulateType [Problem/Success] (default Problem): " simulate_type
-  simulate_type="${simulate_type:-Problem}"
-fi
-
-if [[ "$simulate_type" != "Problem" && "$simulate_type" != "Success" ]]; then
-  echo "Erro: simulateType deve ser 'Problem' ou 'Success'" >&2
-  exit 1
-fi
-
 if [[ -f ./k6.env ]]; then
   set -a
   source ./k6.env
@@ -83,7 +69,6 @@ echo "Start: $(date)"
 
 k6 run \
   -e TEST_TYPE="$test_type" \
-  -e SIMULATE_TYPE="$simulate_type" \
   test-endpoints.js
 
 echo "End: $(date)"

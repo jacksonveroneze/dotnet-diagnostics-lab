@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Cpu;
-using JacksonVeroneze.NET.GRPCServer.Api.Enums;
 using JacksonVeroneze.NET.GRPCServer.Api.Helpers;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
 
@@ -13,7 +12,6 @@ public class FibonacciService : IFibonacciService
 
     public SimulationResult Run(
         int n,
-        SimulateType simulateType,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -26,14 +24,7 @@ public class FibonacciService : IFibonacciService
 
         var stopwatch = Stopwatch.StartNew();
 
-        if (simulateType == SimulateType.Success)
-        {
-            FibIterative(n, cancellationToken);
-        }
-        else
-        {
-            FibNaive(n, cancellationToken);
-        }
+        FibNaive(n, cancellationToken);
 
         stopwatch.Stop();
 
@@ -59,18 +50,5 @@ public class FibonacciService : IFibonacciService
         return n <= 1
             ? n
             : FibNaive(n - 1, cancellationToken) + FibNaive(n - 2, cancellationToken);
-    }
-
-    private static long FibIterative(int n, CancellationToken cancellationToken)
-    {
-        long a = 0, b = 1;
-
-        for (var i = 0; i < n; i++)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            (a, b) = (b, a + b);
-        }
-
-        return a;
     }
 }

@@ -1,6 +1,5 @@
 using Asp.Versioning;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Cpu;
-using JacksonVeroneze.NET.GRPCServer.Api.Enums;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,11 +37,10 @@ internal static class CpuEndpoint
             builder.MapGet("fibonacci", (
                     [FromServices] IFibonacciService service,
                     int n = 38,
-                    SimulateType simulateType = SimulateType.Problem,
                     CancellationToken cancellationToken = default) =>
                 {
                     SimulationResult result = service.Run(
-                        n, simulateType, cancellationToken);
+                        n, cancellationToken);
 
                     return Results.Ok(result);
                 })

@@ -1,7 +1,6 @@
 using Asp.Versioning;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Thread;
-using JacksonVeroneze.NET.GRPCServer.Api.Enums;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,11 +41,10 @@ internal static class ThreadEndpoint
                     [FromServices] IThreadPoolStarvationService service,
                     int delayMs = 100,
                     int taskCount = 2,
-                    SimulateType simulateType = SimulateType.Problem,
                     CancellationToken cancellationToken = default) =>
                 {
                     SimulationResult result = await service.RunAsync(
-                        delayMs, taskCount, simulateType,
+                        delayMs, taskCount,
                         cancellationToken);
 
                     return Results.Ok(result);
@@ -63,11 +61,10 @@ internal static class ThreadEndpoint
                     [FromServices] IThreadLeakService service,
                     int delayMs = 100,
                     int taskCount = 100,
-                    SimulateType simulateType = SimulateType.Problem,
                     CancellationToken cancellationToken = default) =>
                 {
                     SimulationResult result = await service.RunAsync(
-                        delayMs, taskCount, simulateType,
+                        delayMs, taskCount,
                         cancellationToken);
 
                     return Results.Ok(result);
@@ -84,11 +81,10 @@ internal static class ThreadEndpoint
                     [FromServices] ILockContentionService service,
                     int delayMs = 200,
                     int taskCount = 6,
-                    SimulateType simulateType = SimulateType.Problem,
                     CancellationToken cancellationToken = default) =>
                 {
                     SimulationResult result = await service.RunAsync(
-                        delayMs, taskCount, simulateType,
+                        delayMs, taskCount,
                         cancellationToken);
 
                     return Results.Ok(result);

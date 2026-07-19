@@ -1,7 +1,6 @@
 using Asp.Versioning;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
-using JacksonVeroneze.NET.GRPCServer.Api.Enums;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,11 +42,10 @@ internal static class MemoryEndpoint
                     [FromServices] IStringAllocationService service,
                     int iterations = 10_000,
                     int stringLength = 1_000,
-                    SimulateType simulateType = SimulateType.Problem,
                     CancellationToken cancellationToken = default) =>
                 {
                     SimulationResult result = service.Run(
-                        iterations, stringLength, simulateType,
+                        iterations, stringLength,
                         cancellationToken);
 
                     return Results.Ok(result);
@@ -64,11 +62,10 @@ internal static class MemoryEndpoint
                     [FromServices] IMemoryLeakStaticService service,
                     int objectCount = 1_000,
                     int objectSizeBytes = 10_000,
-                    SimulateType simulateType = SimulateType.Problem,
                     CancellationToken cancellationToken = default) =>
                 {
                     SimulationResult result = service.Run(
-                        objectCount, objectSizeBytes, simulateType,
+                        objectCount, objectSizeBytes,
                         cancellationToken);
 
                     return Results.Ok(result);
@@ -85,11 +82,10 @@ internal static class MemoryEndpoint
                     [FromServices] IGen2PromotionService service,
                     int objectCount = 1_000,
                     int objectSizeBytes = 10_000,
-                    SimulateType simulateType = SimulateType.Problem,
                     CancellationToken cancellationToken = default) =>
                 {
                     SimulationResult result = service.Run(
-                        objectCount, objectSizeBytes, simulateType,
+                        objectCount, objectSizeBytes,
                         cancellationToken);
 
                     return Results.Ok(result);
@@ -106,11 +102,10 @@ internal static class MemoryEndpoint
                     [FromServices] ILohPressureService service,
                     int objectCount = 200,
                     int objectSizeBytes = 100_000,
-                    SimulateType simulateType = SimulateType.Problem,
                     CancellationToken cancellationToken = default) =>
                 {
                     SimulationResult result = service.Run(
-                        objectCount, objectSizeBytes, simulateType,
+                        objectCount, objectSizeBytes,
                         cancellationToken);
 
                     return Results.Ok(result);

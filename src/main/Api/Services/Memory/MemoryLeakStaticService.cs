@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
-using JacksonVeroneze.NET.GRPCServer.Api.Enums;
 using JacksonVeroneze.NET.GRPCServer.Api.Helpers;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
 
@@ -18,7 +17,6 @@ public class MemoryLeakStaticService : IMemoryLeakStaticService
     public SimulationResult Run(
         int objectCount,
         int objectSizeBytes,
-        SimulateType simulateType,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -33,14 +31,7 @@ public class MemoryLeakStaticService : IMemoryLeakStaticService
 
         var stopwatch = Stopwatch.StartNew();
 
-        if (simulateType == SimulateType.Success)
-        {
-            RunNonLeaking(objectCount, objectSizeBytes, cancellationToken);
-        }
-        else
-        {
-            RunLeaking(objectCount, objectSizeBytes, cancellationToken);
-        }
+        RunLeaking(objectCount, objectSizeBytes, cancellationToken);
 
         stopwatch.Stop();
 
@@ -69,20 +60,6 @@ public class MemoryLeakStaticService : IMemoryLeakStaticService
             {
                 LeakedObjects.Add(new byte[objectSizeBytes]);
             }
-        }
-    }
-
-    private static void RunNonLeaking(
-        int objectCount,
-        int objectSizeBytes,
-        CancellationToken cancellationToken)
-    {
-        for (var i = 0; i < objectCount; i++)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var buffer = new byte[objectSizeBytes];
-            buffer[0] = 1;
         }
     }
 }

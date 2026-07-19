@@ -1,7 +1,5 @@
 using System.Diagnostics;
-using System.Text;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
-using JacksonVeroneze.NET.GRPCServer.Api.Enums;
 using JacksonVeroneze.NET.GRPCServer.Api.Helpers;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
 
@@ -15,7 +13,6 @@ public class StringAllocationService : IStringAllocationService
     public SimulationResult Run(
         int iterations,
         int stringLength,
-        SimulateType simulateType,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -31,14 +28,7 @@ public class StringAllocationService : IStringAllocationService
 
         var stopwatch = Stopwatch.StartNew();
 
-        if (simulateType == SimulateType.Success)
-        {
-            RunWithStringBuilder(iterations, chunk, cancellationToken);
-        }
-        else
-        {
-            RunWithConcatenation(iterations, chunk, cancellationToken);
-        }
+        RunWithConcatenation(iterations, chunk, cancellationToken);
 
         stopwatch.Stop();
 
@@ -66,21 +56,5 @@ public class StringAllocationService : IStringAllocationService
             cancellationToken.ThrowIfCancellationRequested();
             acc += chunk;
         }
-    }
-
-    private static void RunWithStringBuilder(
-        int iterations,
-        string chunk,
-        CancellationToken cancellationToken)
-    {
-        StringBuilder sb = new(iterations * chunk.Length);
-
-        for (var i = 0; i < iterations; i++)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            sb.Append(chunk);
-        }
-
-        _ = sb.ToString();
     }
 }

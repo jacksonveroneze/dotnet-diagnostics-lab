@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Thread;
-using JacksonVeroneze.NET.GRPCServer.Api.Enums;
 using JacksonVeroneze.NET.GRPCServer.Api.Helpers;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
 
@@ -11,7 +10,6 @@ public class ThreadPoolStarvationService : IThreadPoolStarvationService
     public async Task<SimulationResult> RunAsync(
         int delayMs,
         int taskCount,
-        SimulateType simulateType,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -26,14 +24,7 @@ public class ThreadPoolStarvationService : IThreadPoolStarvationService
 
         var stopwatch = Stopwatch.StartNew();
 
-        if (simulateType == SimulateType.Success)
-        {
-            await RunNonStarvingAsync(delayMs, taskCount, cancellationToken);
-        }
-        else
-        {
-            await RunStarvingAsync(delayMs, taskCount, cancellationToken);
-        }
+        await RunStarvingAsync(delayMs, taskCount, cancellationToken);
 
         stopwatch.Stop();
 
@@ -62,17 +53,6 @@ public class ThreadPoolStarvationService : IThreadPoolStarvationService
                 cancellationToken.ThrowIfCancellationRequested();
                 Thread.Sleep(delayMs);
             }, cancellationToken));
-
-        await Task.WhenAll(tasks);
-    }
-
-    private static async Task RunNonStarvingAsync(
-        int delayMs,
-        int taskCount,
-        CancellationToken cancellationToken)
-    {
-        IEnumerable<Task> tasks = Enumerable.Range(0, taskCount)
-            .Select(_ => Task.Delay(delayMs, cancellationToken));
 
         await Task.WhenAll(tasks);
     }
