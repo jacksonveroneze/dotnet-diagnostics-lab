@@ -84,7 +84,6 @@ echo "Start: $(date)"
 k6 run \
   -e TEST_TYPE="$test_type" \
   -e SIMULATE_TYPE="$simulate_type" \
-  --summary-export "results-${test_type}.json" \
   test-endpoints.js
 
 echo "End: $(date)"

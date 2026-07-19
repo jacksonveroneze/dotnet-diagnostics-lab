@@ -2,7 +2,7 @@ import http from "k6/http";
 import {check} from 'k6';
 import {factoryHeaders} from "./util.js";
 
-const BASE_URL = __ENV.BASE_URL || "http://localhost:7000";
+const BASE_URL = __ENV.BASE_URL || "http://localhost:8080/dotnet-diagnostics-lab";
 const READ_TIMEOUT = __ENV.READ_TIMEOUT || "10s";
 const TEST_TYPE = __ENV.TEST_TYPE;
 const SIMULATE_TYPE = __ENV.SIMULATE_TYPE || "Problem";
@@ -16,7 +16,7 @@ const SCENARIOS = {
     },
     "leak-static": () => {
         const objectCount = 1000;
-        const objectSizeBytes = 10000;
+        const objectSizeBytes = 1000;
 
         return `${BASE_URL}/diagnostics/v1/memory/leak-static?objectCount=${objectCount}&objectSizeBytes=${objectSizeBytes}&simulateType=${SIMULATE_TYPE}`;
     },
@@ -51,7 +51,7 @@ const SCENARIOS = {
         return `${BASE_URL}/diagnostics/v1/thread/lock-contention?delayMs=${delayMs}&taskCount=${taskCount}&simulateType=${SIMULATE_TYPE}`;
     },
     "fibonacci": () => {
-        const n = 38;
+        const n = 32;
 
         return `${BASE_URL}/diagnostics/v1/cpu/fibonacci?n=${n}&simulateType=${SIMULATE_TYPE}`;
     },
