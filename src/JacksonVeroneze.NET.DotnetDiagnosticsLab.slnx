@@ -4,6 +4,7 @@
     <File Path="../.gitignore" />
     <File Path="../LICENSE" />
     <File Path="..\CLAUDE.md" />
+    <File Path="..\README.md" />
     <File Path=".editorconfig" />
     <File Path="AssemblyInfo.cs" />
     <File Path="BannedSymbols.txt" />
