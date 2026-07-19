@@ -1,11 +1,13 @@
-import http from "k6/http";
-import {check} from "k6";
 import {factoryHeaders, runner} from "./util.js";
 
 const BASE_URL = __ENV.BASE_URL || "http://localhost:8080";
 const BASE_PATH = __ENV.BASE_URL || "dotnet-diagnostics-lab";
 const READ_TIMEOUT = __ENV.READ_TIMEOUT || "10s";
 const TEST_TYPE = __ENV.TEST_TYPE;
+
+const WARMUP_RATE = 2;
+const WARMUP_DURATION = "10s";
+const MAIN_SCENARIO = TEST_TYPE || "undefined_test_type";
 
 const TEST_CASES = {
     "string-allocation": {path: "memory/string-allocation", params: {iterations: 100, stringLength: 1000}},
@@ -30,11 +32,20 @@ export const options = {
     insecureSkipTLSVerify: true,
 
     scenarios: {
-        [TEST_TYPE || "undefined_test_type"]: {
+        warmup: {
+            executor: "constant-arrival-rate",
+            rate: WARMUP_RATE,
+            timeUnit: "1s",
+            duration: WARMUP_DURATION,
+            preAllocatedVUs: 5,
+            maxVUs: 10,
+            gracefulStop: "0s",
+        },
+        [MAIN_SCENARIO]: {
             executor: "ramping-arrival-rate",
             startRate: 1,
             timeUnit: "1s",
-
+            startTime: WARMUP_DURATION,
             stages: [
                 {duration: "5s", target: 1},
                 {duration: "15s", target: 50},
@@ -42,7 +53,6 @@ export const options = {
                 {duration: "120s", target: 75},
                 {duration: "30s", target: 0},
             ],
-
             preAllocatedVUs: 200,
             maxVUs: 250,
             gracefulStop: "30s",
@@ -50,10 +60,10 @@ export const options = {
     },
 
     thresholds: {
-        checks: ["rate>=0.99"],
-        http_req_failed: ["rate<=0.01"],
-        http_req_duration: ["p(95)<300"],
-        dropped_iterations: ["count==0"],
+        [`checks{scenario:${MAIN_SCENARIO}}`]: ["rate>=0.99"],
+        [`http_req_failed{scenario:${MAIN_SCENARIO}}`]: ["rate<=0.01"],
+        [`http_req_duration{scenario:${MAIN_SCENARIO}}`]: ["p(95)<300"],
+        [`dropped_iterations{scenario:${MAIN_SCENARIO}}`]: ["count==0"],
     },
 
     summaryTrendStats: ["avg", "min", "med", "p(90)", "p(95)", "p(99)", "max"],
