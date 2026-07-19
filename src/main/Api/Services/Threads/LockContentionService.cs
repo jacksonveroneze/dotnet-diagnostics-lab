@@ -7,6 +7,11 @@ namespace JacksonVeroneze.NET.GRPCServer.Api.Services.Threads;
 
 public class LockContentionService : ILockContentionService
 {
+    private const int MinDelayMs = 100;
+    private const int MaxDelayMs = 10000;
+    private const int MinTaskCount = 1;
+    private const int MaxTaskCount = 10;
+
     // shared across every concurrent request, not just within one call: the
     // point is to reproduce a global application lock (e.g. a badly designed
     // singleton/cache), so contention compounds as concurrent requests pile up.
@@ -18,10 +23,10 @@ public class LockContentionService : ILockContentionService
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        ArgumentOutOfRangeException.ThrowIfLessThan(delayMs, 100);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(delayMs, 10000);
-        ArgumentOutOfRangeException.ThrowIfLessThan(taskCount, 1);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(taskCount, 10);
+        ArgumentOutOfRangeException.ThrowIfLessThan(delayMs, MinDelayMs);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(delayMs, MaxDelayMs);
+        ArgumentOutOfRangeException.ThrowIfLessThan(taskCount, MinTaskCount);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(taskCount, MaxTaskCount);
 
         var gcBefore = GcMetrics.CollectionCount();
 

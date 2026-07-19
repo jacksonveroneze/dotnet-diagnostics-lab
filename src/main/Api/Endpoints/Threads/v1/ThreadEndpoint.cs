@@ -38,13 +38,12 @@ internal static class ThreadEndpoint
         {
             builder.MapGet("thread-pool-starvation", async (
                     [FromServices] IThreadPoolStarvationService service,
-                    int delayMs = 100,
-                    int taskCount = 2,
+                    int delayMs,
+                    int taskCount,
                     CancellationToken cancellationToken = default) =>
                 {
                     SimulationResult result = await service.RunAsync(
-                        delayMs, taskCount,
-                        cancellationToken);
+                        delayMs, taskCount, cancellationToken);
 
                     return Results.Ok(result);
                 })
@@ -58,13 +57,12 @@ internal static class ThreadEndpoint
         {
             builder.MapGet("thread-leak", async (
                     [FromServices] IThreadLeakService service,
-                    int delayMs = 100,
-                    int taskCount = 100,
+                    int delayMs,
+                    int taskCount,
                     CancellationToken cancellationToken = default) =>
                 {
                     SimulationResult result = await service.RunAsync(
-                        delayMs, taskCount,
-                        cancellationToken);
+                        delayMs, taskCount, cancellationToken);
 
                     return Results.Ok(result);
                 })
@@ -78,13 +76,12 @@ internal static class ThreadEndpoint
         {
             builder.MapGet("lock-contention", async (
                     [FromServices] ILockContentionService service,
-                    int delayMs = 200,
-                    int taskCount = 6,
+                    int delayMs,
+                    int taskCount,
                     CancellationToken cancellationToken = default) =>
                 {
                     SimulationResult result = await service.RunAsync(
-                        delayMs, taskCount,
-                        cancellationToken);
+                        delayMs, taskCount, cancellationToken);
 
                     return Results.Ok(result);
                 })

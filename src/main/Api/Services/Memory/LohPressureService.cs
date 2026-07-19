@@ -9,15 +9,16 @@ public class LohPressureService : ILohPressureService
 {
     // the CLR allocates arrays/objects >= 85,000 bytes directly on the Large
     // Object Heap, bypassing Gen0/Gen1.
+    private const int MinObjectCount = 1;
+    private const int MaxObjectCount = 2_000;
     private const int MinObjectSizeBytes = 85_000;
     private const int MaxObjectSizeBytes = 5_242_880;
-    private const int MaxObjectCount = 2_000;
 
     public SimulationResult Run(
         int objectCount,
         int objectSizeBytes)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(objectCount, 1);
+        ArgumentOutOfRangeException.ThrowIfLessThan(objectCount, MinObjectCount);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(objectCount, MaxObjectCount);
         ArgumentOutOfRangeException.ThrowIfLessThan(objectSizeBytes, MinObjectSizeBytes);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(objectSizeBytes, MaxObjectSizeBytes);

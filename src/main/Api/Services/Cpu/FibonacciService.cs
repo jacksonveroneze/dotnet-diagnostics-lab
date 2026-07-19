@@ -7,14 +7,14 @@ namespace JacksonVeroneze.NET.GRPCServer.Api.Services.Cpu;
 
 public class FibonacciService : IFibonacciService
 {
-    private const int MinN = 1;
-    private const int MaxN = 40;
+    private const int MinValue = 1;
+    private const int MaxValue = 40;
 
     public SimulationResult Run(
         int sequencePosition)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(sequencePosition, MinN);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(sequencePosition, MaxN);
+        ArgumentOutOfRangeException.ThrowIfLessThan(sequencePosition, MinValue);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(sequencePosition, MaxValue);
 
         var gcBefore = GcMetrics.CollectionCount();
 

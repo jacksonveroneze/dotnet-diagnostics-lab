@@ -7,16 +7,18 @@ namespace JacksonVeroneze.NET.GRPCServer.Api.Services.Memory;
 
 public class StringAllocationService : IStringAllocationService
 {
+    private const int MinIterations = 1;
     private const int MaxIterations = 1_00_000;
+    private const int MinStringLength = 1;
     private const int MaxStringLength = 99_000;
 
     public SimulationResult Run(
         int iterations,
         int stringLength)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(iterations, 1);
+        ArgumentOutOfRangeException.ThrowIfLessThan(iterations, MinIterations);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(iterations, MaxIterations);
-        ArgumentOutOfRangeException.ThrowIfLessThan(stringLength, 1);
+        ArgumentOutOfRangeException.ThrowIfLessThan(stringLength, MinStringLength);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(stringLength, MaxStringLength);
 
         var gcBefore = GcMetrics.CollectionCount();

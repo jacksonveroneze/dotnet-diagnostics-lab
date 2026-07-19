@@ -7,16 +7,18 @@ namespace JacksonVeroneze.NET.GRPCServer.Api.Services.Memory;
 
 public class Gen2PromotionService : IGen2PromotionService
 {
+    private const int MinObjectCount = 1;
     private const int MaxObjectCount = 10_000;
+    private const int MinObjectSizeBytes = 1;
     private const int MaxObjectSizeBytes = 1_048_576;
 
     public SimulationResult Run(
         int objectCount,
         int objectSizeBytes)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(objectCount, 1);
+        ArgumentOutOfRangeException.ThrowIfLessThan(objectCount, MinObjectCount);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(objectCount, MaxObjectCount);
-        ArgumentOutOfRangeException.ThrowIfLessThan(objectSizeBytes, 1);
+        ArgumentOutOfRangeException.ThrowIfLessThan(objectSizeBytes, MinObjectSizeBytes);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(objectSizeBytes, MaxObjectSizeBytes);
 
         var gcBefore = GcMetrics.CollectionCount();

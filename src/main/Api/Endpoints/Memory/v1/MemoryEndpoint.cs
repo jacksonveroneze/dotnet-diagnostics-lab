@@ -39,8 +39,8 @@ internal static class MemoryEndpoint
         {
             builder.MapGet("string-allocation", (
                     [FromServices] IStringAllocationService service,
-                    int iterations = 10_000,
-                    int stringLength = 1_000) =>
+                    int iterations,
+                    int stringLength) =>
                 {
                     SimulationResult result = service.Run(
                         iterations, stringLength);
@@ -57,8 +57,8 @@ internal static class MemoryEndpoint
         {
             builder.MapGet("leak-static", (
                     [FromServices] IMemoryLeakStaticService service,
-                    int objectCount = 1_000,
-                    int objectSizeBytes = 10_000) =>
+                    int objectCount,
+                    int objectSizeBytes) =>
                 {
                     SimulationResult result = service.Run(
                         objectCount, objectSizeBytes);
@@ -74,8 +74,8 @@ internal static class MemoryEndpoint
         {
             builder.MapGet("gen2-promotion", (
                     [FromServices] IGen2PromotionService service,
-                    int objectCount = 1_000,
-                    int objectSizeBytes = 10_000) =>
+                    int objectCount,
+                    int objectSizeBytes) =>
                 {
                     SimulationResult result = service.Run(
                         objectCount, objectSizeBytes);
@@ -92,8 +92,8 @@ internal static class MemoryEndpoint
         {
             builder.MapGet("loh-pressure", (
                     [FromServices] ILohPressureService service,
-                    int objectCount = 200,
-                    int objectSizeBytes = 100_000) =>
+                    int objectCount,
+                    int objectSizeBytes) =>
                 {
                     SimulationResult result = service.Run(
                         objectCount, objectSizeBytes);
