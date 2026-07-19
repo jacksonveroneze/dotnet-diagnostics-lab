@@ -1,7 +1,7 @@
 services:
   load_balancer:
     container_name: loadbalancer
-    image: traefik:v3.6
+    image: traefik:v3.7
     restart: unless-stopped
     command:
       # EntryPoints
@@ -57,7 +57,8 @@ services:
       retries: 3
       start_period: 5s
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     ports:
       - "8080:80"
       - "8443:443"
@@ -93,10 +94,6 @@ services:
       dockerfile: ./Dockerfile
     env_file:
       - .env
-    depends_on:
-      - monitor
-    volumes:
-      - ./monitor-data/diag:/tmp/diag
     labels:
       - traefik.enable=true
 
@@ -120,6 +117,10 @@ services:
 
       # Apply middlewares
       - traefik.http.routers.api_service.middlewares=strip-prefix
+    depends_on:
+      - dotnet_monitor
+    volumes:
+      - ./monitor-data/diag:/tmp/diag
     networks:
       - dotnet-diagnostics-lab-service-internal
       - dotnet-diagnostics-lab-service-public
@@ -141,7 +142,7 @@ services:
 
   dotnet_monitor:
     container_name: dotnet_monitor
-    image: mcr.microsoft.com/dotnet/monitor:9
+    image: mcr.microsoft.com/dotnet/monitor:10
     restart: unless-stopped
     command:
       - collect
@@ -211,7 +212,7 @@ services:
 
   grafana:
     container_name: grafana
-    image: grafana/grafana-oss
+    image: grafana/grafana-oss:latest
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "grafana-cli", "plugins", "ls" ]
