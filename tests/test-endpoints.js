@@ -1,66 +1,36 @@
 import http from "k6/http";
-import {check} from 'k6';
-import {factoryHeaders} from "./util.js";
+import {check} from "k6";
+import {factoryHeaders, runner} from "./util.js";
 
-const BASE_URL = __ENV.BASE_URL || "http://localhost:8080/dotnet-diagnostics-lab";
+const BASE_URL = __ENV.BASE_URL || "http://localhost:8080";
+const BASE_PATH = __ENV.BASE_URL || "dotnet-diagnostics-lab";
 const READ_TIMEOUT = __ENV.READ_TIMEOUT || "10s";
 const TEST_TYPE = __ENV.TEST_TYPE;
 
-const SCENARIOS = {
-    "string-allocation": () => {
-        const iterations = 100;
-        const stringLength = 1000;
-
-        return `${BASE_URL}/diagnostics/v1/memory/string-allocation?iterations=${iterations}&stringLength=${stringLength}`;
-    },
-    "leak-static": () => {
-        const objectCount = 1000;
-        const objectSizeBytes = 1000;
-
-        return `${BASE_URL}/diagnostics/v1/memory/leak-static?objectCount=${objectCount}&objectSizeBytes=${objectSizeBytes}`;
-    },
-    "gen2-promotion": () => {
-        const objectCount = 1000;
-        const objectSizeBytes = 10000;
-
-        return `${BASE_URL}/diagnostics/v1/memory/gen2-promotion?objectCount=${objectCount}&objectSizeBytes=${objectSizeBytes}`;
-    },
-    "loh-pressure": () => {
-        const objectCount = 200;
-        const objectSizeBytes = 100000;
-
-        return `${BASE_URL}/diagnostics/v1/memory/loh-pressure?objectCount=${objectCount}&objectSizeBytes=${objectSizeBytes}`;
-    },
-    "thread-pool-starvation": () => {
-        const delayMs = 10000;
-        const taskCount = 2;
-
-        return `${BASE_URL}/diagnostics/v1/thread/thread-pool-starvation?delayMs=${delayMs}&taskCount=${taskCount}`;
-    },
-    "thread-leak": () => {
-        const delayMs = 10000;
-        const taskCount = 2;
-
-        return `${BASE_URL}/diagnostics/v1/thread/thread-leak?delayMs=${delayMs}&taskCount=${taskCount}`;
-    },
-    "lock-contention": () => {
-        const delayMs = 10000;
-        const taskCount = 2;
-
-        return `${BASE_URL}/diagnostics/v1/thread/lock-contention?delayMs=${delayMs}&taskCount=${taskCount}`;
-    },
-    "fibonacci": () => {
-        const sequencePosition = 32;
-
-        return `${BASE_URL}/diagnostics/v1/cpu/fibonacci?sequencePosition=${sequencePosition}`;
-    },
+const TEST_CASES = {
+    "string-allocation": {path: "memory/string-allocation", params: {iterations: 100, stringLength: 1000}},
+    "leak-static": {path: "memory/leak-static", params: {objectCount: 1000, objectSizeBytes: 1000}},
+    "gen2-promotion": {path: "memory/gen2-promotion", params: {objectCount: 1000, objectSizeBytes: 10000}},
+    "loh-pressure": {path: "memory/loh-pressure", params: {objectCount: 200, objectSizeBytes: 100000}},
+    "thread-pool-starvation": {path: "thread/thread-pool-starvation", params: {delayMs: 10000, taskCount: 2}},
+    "thread-leak": {path: "thread/thread-leak", params: {delayMs: 10000, taskCount: 2}},
+    "lock-contention": {path: "thread/lock-contention", params: {delayMs: 10000, taskCount: 2}},
+    "fibonacci": {path: "cpu/fibonacci", params: {sequencePosition: 32}},
 };
+
+function buildUrl({path, params}) {
+    const query = Object.entries(params)
+        .map(([key, value]) => `${key}=${value}`)
+        .join("&");
+
+    return `${BASE_URL}/${BASE_PATH}/diagnostics/v1/${path}?${query}`;
+}
 
 export const options = {
     insecureSkipTLSVerify: true,
 
     scenarios: {
-        get_profile: {
+        [TEST_TYPE || "undefined_test_type"]: {
             executor: "ramping-arrival-rate",
             startRate: 1,
             timeUnit: "1s",
@@ -90,38 +60,19 @@ export const options = {
 };
 
 export function setup() {
-    if (!TEST_TYPE || !SCENARIOS[TEST_TYPE]) {
+    if (!TEST_TYPE || !TEST_CASES[TEST_TYPE]) {
         throw new Error(
-            `TEST_TYPE inválido ou ausente: "${TEST_TYPE}". Valores aceitos: ${Object.keys(SCENARIOS).join(", ")}`
+            `TEST_TYPE inválido ou ausente: "${TEST_TYPE}". 
+            Valores aceitos: ${Object.keys(TEST_CASES).join(", ")}`
         );
     }
 
-    const headers = factoryHeaders();
-
-    return {headers};
+    return {
+        headers: factoryHeaders(),
+        url: buildUrl(TEST_CASES[TEST_TYPE])
+    };
 }
 
 export default function (data) {
-    const headers = {
-        ...data.headers,
-        "x-correlation-id": crypto.randomUUID(),
-    };
-
-    const url = SCENARIOS[TEST_TYPE]();
-
-    console.log(url)
-
-    const res = http.get(url, {
-        timeout: READ_TIMEOUT,
-        headers: headers,
-        tags: {name: "GET Stress Test"},
-    });
-
-    if(res.status !== 200) {
-        console.error(`Error occurred: ${res.status} - ${res.body}`);
-    }
-
-    check(res, {
-        "status is OK": (response) => response.status === 200,
-    });
+    runner(data, READ_TIMEOUT, TEST_TYPE)
 }
