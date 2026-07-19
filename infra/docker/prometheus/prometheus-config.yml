@@ -22,9 +22,9 @@ scrape_configs:
         type: "A"
         port: 8080
         
-  - job_name: "monitor"
+  - job_name: "dotnet_monitor"
     honor_timestamps: true
     metrics_path: /metrics
     scheme: http
     static_configs:
-      - targets: ["monitor:52323"]
+      - targets: ["dotnet_monitor:52323"]

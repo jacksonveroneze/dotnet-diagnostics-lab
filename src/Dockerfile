@@ -42,9 +42,6 @@ ENV ASPNETCORE_ENVIRONMENT=Production \
     LANGUAGE=pt_BR.UTF-8 \
     LC_ALL=pt_BR.UTF-8
 
-HEALTHCHECK --interval=10s --timeout=1s --start-period=5s --retries=3 \
-  CMD curl --silent --fail http://localhost:8080/health?source=docker-inner || exit 1
-
 COPY --from=publish /publish /home/app
 
 WORKDIR /home/app

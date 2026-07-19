@@ -10,7 +10,11 @@ const MAIN_SCENARIO = TEST_TYPE || "undefined_test_type";
 
 // Warmup
 const WARMUP_RATE = 1;
-const WARMUP_DURATION = "5s";
+const WARMUP_DURATION_SECONDS = 5;
+
+// Shutdown
+const SHUTDOWN_RATE = 1;
+const SHUTDOWN_DURATION_SECONDS = 5;
 
 // k6 VUs
 const PRE_VUS = Number(__ENV.PRE_VUS || 100);
@@ -19,11 +23,11 @@ const MAX_VUS = Number(__ENV.MAX_VUS || 500);
 // Carga
 const START_RPS = Number(__ENV.START_RPS || 50);
 const STEP_RPS = Number(__ENV.STEP_RPS || 50);
-const STEPS = Number(__ENV.STEPS || 2);
-const START_TIME = Number(__ENV.STEPS || '5S');
+const TOTAL_STEPS = Number(__ENV.STEPS || 2);
+const STEP_DURATION_SECONDS = Number(__ENV.STEP_DURATION || 30);
 
 const TEST_CASES = {
-    "string-allocation": {path: "memory/string-allocation", params: {iterations: 100, stringLength: 1000}},
+    "string-allocation": {path: "memory/string-allocation", params: {iterations: 100, stringLength: 500}},
     "leak-static": {path: "memory/leak-static", params: {objectCount: 1000, objectSizeBytes: 1000}},
     "gen2-promotion": {path: "memory/gen2-promotion", params: {objectCount: 1000, objectSizeBytes: 10000}},
     "loh-pressure": {path: "memory/loh-pressure", params: {objectCount: 200, objectSizeBytes: 100000}},
@@ -43,8 +47,8 @@ function buildUrl({path, params}) {
 
 function buildStages() {
     const stages = [];
-    for (let i = 0; i < STEPS; i++) {
-        stages.push({ target: START_RPS + i * STEP_RPS, duration: "30s" });
+    for (let i = 0; i < TOTAL_STEPS; i++) {
+        stages.push({target: START_RPS + i * STEP_RPS, duration: STEP_DURATION_SECONDS + "s"});
     }
     return stages;
 }
@@ -57,7 +61,7 @@ export const options = {
             executor: "constant-arrival-rate",
             rate: WARMUP_RATE,
             timeUnit: "1s",
-            duration: WARMUP_DURATION,
+            duration: WARMUP_DURATION_SECONDS + "s",
             preAllocatedVUs: 5,
             maxVUs: 10,
             gracefulStop: "0s",
@@ -68,9 +72,19 @@ export const options = {
             timeUnit: "1s",
             preAllocatedVUs: PRE_VUS,
             maxVUs: MAX_VUS,
-            startTime: START_TIME,
+            startTime: (WARMUP_DURATION_SECONDS + 1) + "s",
             stages: buildStages(),
-            tags: { phase: "step", test: MAIN_SCENARIO },
+            tags: {phase: "step", test: MAIN_SCENARIO},
+            gracefulStop: "0s",
+        },
+        shutdown: {
+            executor: "constant-arrival-rate",
+            rate: SHUTDOWN_RATE,
+            timeUnit: "1s",
+            duration: SHUTDOWN_DURATION_SECONDS + "s",
+            preAllocatedVUs: 5,
+            maxVUs: 10,
+            startTime: (WARMUP_DURATION_SECONDS + (TOTAL_STEPS * STEP_DURATION_SECONDS) + 1) + "s",
             gracefulStop: "0s",
         },
     },
