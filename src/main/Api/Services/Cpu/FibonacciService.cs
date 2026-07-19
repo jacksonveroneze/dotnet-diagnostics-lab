@@ -11,12 +11,12 @@ public class FibonacciService : IFibonacciService
     private const int MaxN = 40;
 
     public SimulationResult Run(
-        int n,
+        int sequencePosition,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        ArgumentOutOfRangeException.ThrowIfLessThan(n, MinN);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(n, MaxN);
+        ArgumentOutOfRangeException.ThrowIfLessThan(sequencePosition, MinN);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(sequencePosition, MaxN);
 
         var gcBefore = GcMetrics.CollectionCount();
 
@@ -24,7 +24,7 @@ public class FibonacciService : IFibonacciService
 
         var stopwatch = Stopwatch.StartNew();
 
-        FibNaive(n, cancellationToken);
+        FibNaive(sequencePosition, cancellationToken);
 
         stopwatch.Stop();
 
@@ -36,19 +36,20 @@ public class FibonacciService : IFibonacciService
             AllocatedBytes: bytesAfter - bytesBefore,
             GcCountBefore: gcBefore,
             GcCountAfter: gcAfter,
-            Iterations: n
+            Iterations: sequencePosition
         );
     }
 
     // naive recursion, no memoization: O(1.618^n) calls, the classic CPU
     // hot-path shape a profiler like dotTrace surfaces as a single dominant
     // self-time frame.
-    private static long FibNaive(int n, CancellationToken cancellationToken)
+    private static long FibNaive(int sequencePosition, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        return n <= 1
-            ? n
-            : FibNaive(n - 1, cancellationToken) + FibNaive(n - 2, cancellationToken);
+        return sequencePosition <= 1
+            ? sequencePosition
+            : FibNaive(sequencePosition - 1, cancellationToken) +
+              FibNaive(sequencePosition - 2, cancellationToken);
     }
 }

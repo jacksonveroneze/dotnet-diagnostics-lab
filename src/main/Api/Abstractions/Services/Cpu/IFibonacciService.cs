@@ -5,6 +5,6 @@ namespace JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Cpu;
 public interface IFibonacciService
 {
     SimulationResult Run(
-        int n,
+        int sequencePosition,
         CancellationToken cancellationToken);
 }

@@ -30,9 +30,9 @@ public static class OpenTelemetryExtensions
 
         return services;
 
-        void ConfigureResource(ResourceBuilder r)
+        void ConfigureResource(ResourceBuilder resourceBuilder)
         {
-            r.AddService(
+            resourceBuilder.AddService(
                 appConfiguration.AppName,
                 serviceVersion: appConfiguration.AppVersion.ToString(),
                 serviceInstanceId: Environment.MachineName);

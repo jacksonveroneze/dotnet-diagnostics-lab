@@ -36,11 +36,11 @@ internal static class CpuEndpoint
         {
             builder.MapGet("fibonacci", (
                     [FromServices] IFibonacciService service,
-                    int n = 38,
+                    int sequencePosition = 38,
                     CancellationToken cancellationToken = default) =>
                 {
                     SimulationResult result = service.Run(
-                        n, cancellationToken);
+                        sequencePosition, cancellationToken);
 
                     return Results.Ok(result);
                 })

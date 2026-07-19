@@ -50,9 +50,9 @@ const SCENARIOS = {
         return `${BASE_URL}/diagnostics/v1/thread/lock-contention?delayMs=${delayMs}&taskCount=${taskCount}`;
     },
     "fibonacci": () => {
-        const n = 32;
+        const sequencePosition = 32;
 
-        return `${BASE_URL}/diagnostics/v1/cpu/fibonacci?n=${n}`;
+        return `${BASE_URL}/diagnostics/v1/cpu/fibonacci?sequencePosition=${sequencePosition}`;
     },
 };
 
@@ -122,6 +122,6 @@ export default function (data) {
     }
 
     check(res, {
-        "status is OK": (r) => r.status === 200,
+        "status is OK": (response) => response.status === 200,
     });
 }
