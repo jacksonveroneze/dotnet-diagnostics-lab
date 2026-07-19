@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Thread;
 using JacksonVeroneze.NET.GRPCServer.Api.Helpers;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
@@ -23,40 +22,20 @@ public class ThreadPoolStarvationService : IThreadPoolStarvationService
         ArgumentOutOfRangeException.ThrowIfLessThan(taskCount, MinTaskCount);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(taskCount, MaxTaskCount);
 
-        var gcBefore = GcMetrics.CollectionCount();
-
-        var bytesBefore = GcMetrics.TotalAllocatedBytes();
-
-        var stopwatch = Stopwatch.StartNew();
-
-        await RunStarvingAsync(delayMs, taskCount, cancellationToken);
-
-        stopwatch.Stop();
-
-        var bytesAfter = GcMetrics.TotalAllocatedBytes();
-        var gcAfter = GcMetrics.CollectionCount();
-
-        return new SimulationResult(
-            DurationMs: stopwatch.ElapsedMilliseconds,
-            AllocatedBytes: bytesAfter - bytesBefore,
-            GcCountBefore: gcBefore,
-            GcCountAfter: gcAfter,
-            Iterations: taskCount
-        );
+        return await SimulationRunner.RunAsync(()
+            => InternalRunAsync(delayMs, taskCount, cancellationToken));
     }
 
-    private static async Task RunStarvingAsync(
+    private static async Task InternalRunAsync(
         int delayMs,
         int taskCount,
         CancellationToken cancellationToken)
     {
-        // intentional pool blocking: lab exception to the repo's general async
-        // rules, to reproduce real thread pool starvation under concurrent load.
         IEnumerable<Task> tasks = Enumerable.Range(0, taskCount)
             .Select(_ => Task.Run(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                Thread.Sleep(delayMs);
+                Task.Delay(delayMs, cancellationToken).GetAwaiter().GetResult();
             }, cancellationToken));
 
         await Task.WhenAll(tasks);

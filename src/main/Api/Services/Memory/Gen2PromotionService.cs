@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
 using JacksonVeroneze.NET.GRPCServer.Api.Helpers;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
@@ -21,29 +20,11 @@ public class Gen2PromotionService : IGen2PromotionService
         ArgumentOutOfRangeException.ThrowIfLessThan(objectSizeBytes, MinObjectSizeBytes);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(objectSizeBytes, MaxObjectSizeBytes);
 
-        var gcBefore = GcMetrics.CollectionCount();
-
-        var bytesBefore = GcMetrics.TotalAllocatedBytes();
-
-        var stopwatch = Stopwatch.StartNew();
-
-        RunWithPromotion(objectCount, objectSizeBytes);
-
-        stopwatch.Stop();
-
-        var bytesAfter = GcMetrics.TotalAllocatedBytes();
-        var gcAfter = GcMetrics.CollectionCount();
-
-        return new SimulationResult(
-            DurationMs: stopwatch.ElapsedMilliseconds,
-            AllocatedBytes: bytesAfter - bytesBefore,
-            GcCountBefore: gcBefore,
-            GcCountAfter: gcAfter,
-            Iterations: objectCount
-        );
+        return SimulationRunner.Run(()
+            => InternalRun(objectCount, objectSizeBytes));
     }
 
-    private static void RunWithPromotion(
+    private static void InternalRun(
         int objectCount,
         int objectSizeBytes)
     {

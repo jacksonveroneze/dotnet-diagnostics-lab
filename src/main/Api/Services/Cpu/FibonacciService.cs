@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Cpu;
 using JacksonVeroneze.NET.GRPCServer.Api.Helpers;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
@@ -16,33 +15,15 @@ public class FibonacciService : IFibonacciService
         ArgumentOutOfRangeException.ThrowIfLessThan(sequencePosition, MinValue);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(sequencePosition, MaxValue);
 
-        var gcBefore = GcMetrics.CollectionCount();
-
-        var bytesBefore = GcMetrics.TotalAllocatedBytes();
-
-        var stopwatch = Stopwatch.StartNew();
-
-        RunFibonacci(sequencePosition);
-
-        stopwatch.Stop();
-
-        var bytesAfter = GcMetrics.TotalAllocatedBytes();
-        var gcAfter = GcMetrics.CollectionCount();
-
-        return new SimulationResult(
-            DurationMs: stopwatch.ElapsedMilliseconds,
-            AllocatedBytes: bytesAfter - bytesBefore,
-            GcCountBefore: gcBefore,
-            GcCountAfter: gcAfter,
-            Iterations: sequencePosition
-        );
+        return SimulationRunner.Run(()
+            => InternalRun(sequencePosition));
     }
 
-    private static long RunFibonacci(int sequencePosition)
+    private static long InternalRun(int sequencePosition)
     {
         return sequencePosition <= 1
             ? sequencePosition
-            : RunFibonacci(sequencePosition - 1) +
-              RunFibonacci(sequencePosition - 2);
+            : InternalRun(sequencePosition - 1) +
+              InternalRun(sequencePosition - 2);
     }
 }

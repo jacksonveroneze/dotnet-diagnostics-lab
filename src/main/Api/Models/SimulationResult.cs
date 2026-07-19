@@ -6,6 +6,5 @@ public record SimulationResult(
     long DurationMs,
     long AllocatedBytes,
     GcCount GcCountBefore,
-    GcCount GcCountAfter,
-    int Iterations
+    GcCount GcCountAfter
 );

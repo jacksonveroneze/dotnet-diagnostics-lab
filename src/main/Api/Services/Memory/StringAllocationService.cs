@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
 using JacksonVeroneze.NET.GRPCServer.Api.Helpers;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
@@ -21,38 +20,22 @@ public class StringAllocationService : IStringAllocationService
         ArgumentOutOfRangeException.ThrowIfLessThan(stringLength, MinStringLength);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(stringLength, MaxStringLength);
 
-        var gcBefore = GcMetrics.CollectionCount();
-        var chunk = new string('_', stringLength);
-
-        var bytesBefore = GcMetrics.TotalAllocatedBytes();
-
-        var stopwatch = Stopwatch.StartNew();
-
-        RunWithConcatenation(iterations, chunk);
-
-        stopwatch.Stop();
-
-        var bytesAfter = GcMetrics.TotalAllocatedBytes();
-        var gcAfter = GcMetrics.CollectionCount();
-
-        return new SimulationResult(
-            DurationMs: stopwatch.ElapsedMilliseconds,
-            AllocatedBytes: bytesAfter - bytesBefore,
-            GcCountBefore: gcBefore,
-            GcCountAfter: gcAfter,
-            Iterations: iterations
-        );
+        return SimulationRunner.Run(() 
+            => InternalRun(iterations, stringLength));
     }
 
-    private static void RunWithConcatenation(
+    private static void InternalRun(
         int iterations,
-        string chunk)
+        int stringLength)
     {
+        var chunk = new string('_', stringLength);
+        
         var acc = string.Empty;
 
         for (var i = 0; i < iterations; i++)
         {
-            acc += chunk;
+            acc += chunk + Environment.NewLine;
+            acc += chunk + Environment.NewLine;
         }
     }
 }

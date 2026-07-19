@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Thread;
 using JacksonVeroneze.NET.GRPCServer.Api.Helpers;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
@@ -23,26 +22,8 @@ public class ThreadLeakService : IThreadLeakService
         ArgumentOutOfRangeException.ThrowIfLessThan(taskCount, MinTaskCount);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(taskCount, MaxTaskCount);
 
-        var gcBefore = GcMetrics.CollectionCount();
-
-        var bytesBefore = GcMetrics.TotalAllocatedBytes();
-
-        var stopwatch = Stopwatch.StartNew();
-
-        await InternalRunAsync(delayMs, taskCount);
-
-        stopwatch.Stop();
-
-        var bytesAfter = GcMetrics.TotalAllocatedBytes();
-        var gcAfter = GcMetrics.CollectionCount();
-
-        return new SimulationResult(
-            DurationMs: stopwatch.ElapsedMilliseconds,
-            AllocatedBytes: bytesAfter - bytesBefore,
-            GcCountBefore: gcBefore,
-            GcCountAfter: gcAfter,
-            Iterations: 0
-        );
+        return await SimulationRunner.RunAsync(()
+            => InternalRunAsync(delayMs, taskCount));
     }
 
     private static async Task InternalRunAsync(
@@ -52,7 +33,8 @@ public class ThreadLeakService : IThreadLeakService
         await Task.Yield();
         for (var i = 0; i < taskCount; i++)
         {
-            var thread = new Thread(() => RecurseAndSleep(depth: 500, delayMs),
+            var thread = new Thread(() =>
+                    RecurseAndSleep(depth: 500, delayMs),
                 maxStackSize: 0)
             {
                 IsBackground = true,
@@ -65,7 +47,7 @@ public class ThreadLeakService : IThreadLeakService
 
     static void RecurseAndSleep(int depth, int sleepMs)
     {
-        Span<byte> localBuffer = stackalloc byte[512]; // toca páginas do stack
+        Span<byte> localBuffer = stackalloc byte[512];
         if (depth > 0)
             RecurseAndSleep(depth - 1, sleepMs);
         else

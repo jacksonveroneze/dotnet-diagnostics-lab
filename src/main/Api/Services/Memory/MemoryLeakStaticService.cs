@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
 using JacksonVeroneze.NET.GRPCServer.Api.Helpers;
 using JacksonVeroneze.NET.GRPCServer.Api.Models;
@@ -12,7 +11,6 @@ public class MemoryLeakStaticService : IMemoryLeakStaticService
     private const int MinObjectSizeBytes = 1;
     private const int MaxObjectSizeBytes = 1_048_576;
 
-    // static field is a permanent GC root: objects added here are never collected (intentional leak).
     private static readonly List<byte[]> LeakedObjects = [];
     private static readonly Lock LeakedObjectsLock = new();
 
@@ -25,29 +23,11 @@ public class MemoryLeakStaticService : IMemoryLeakStaticService
         ArgumentOutOfRangeException.ThrowIfLessThan(objectSizeBytes, MinObjectSizeBytes);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(objectSizeBytes, MaxObjectSizeBytes);
 
-        var gcBefore = GcMetrics.CollectionCount();
-
-        var bytesBefore = GcMetrics.TotalAllocatedBytes();
-
-        var stopwatch = Stopwatch.StartNew();
-
-        RunLeaking(objectCount, objectSizeBytes);
-
-        stopwatch.Stop();
-
-        var bytesAfter = GcMetrics.TotalAllocatedBytes();
-        var gcAfter = GcMetrics.CollectionCount();
-
-        return new SimulationResult(
-            DurationMs: stopwatch.ElapsedMilliseconds,
-            AllocatedBytes: bytesAfter - bytesBefore,
-            GcCountBefore: gcBefore,
-            GcCountAfter: gcAfter,
-            Iterations: objectCount
-        );
+        return SimulationRunner.Run(()
+            => InternalRun(objectCount, objectSizeBytes));
     }
 
-    private static void RunLeaking(
+    private static void InternalRun(
         int objectCount,
         int objectSizeBytes)
     {
