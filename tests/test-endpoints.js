@@ -5,9 +5,22 @@ const BASE_PATH = __ENV.BASE_URL || "dotnet-diagnostics-lab";
 const READ_TIMEOUT = __ENV.READ_TIMEOUT || "10s";
 const TEST_TYPE = __ENV.TEST_TYPE;
 
-const WARMUP_RATE = 2;
-const WARMUP_DURATION = "10s";
+// Test
 const MAIN_SCENARIO = TEST_TYPE || "undefined_test_type";
+
+// Warmup
+const WARMUP_RATE = 1;
+const WARMUP_DURATION = "5s";
+
+// k6 VUs
+const PRE_VUS = Number(__ENV.PRE_VUS || 100);
+const MAX_VUS = Number(__ENV.MAX_VUS || 500);
+
+// Carga
+const START_RPS = Number(__ENV.START_RPS || 50);
+const STEP_RPS = Number(__ENV.STEP_RPS || 50);
+const STEPS = Number(__ENV.STEPS || 2);
+const START_TIME = Number(__ENV.STEPS || '5S');
 
 const TEST_CASES = {
     "string-allocation": {path: "memory/string-allocation", params: {iterations: 100, stringLength: 1000}},
@@ -28,6 +41,14 @@ function buildUrl({path, params}) {
     return `${BASE_URL}/${BASE_PATH}/diagnostics/v1/${path}?${query}`;
 }
 
+function buildStages() {
+    const stages = [];
+    for (let i = 0; i < STEPS; i++) {
+        stages.push({ target: START_RPS + i * STEP_RPS, duration: "30s" });
+    }
+    return stages;
+}
+
 export const options = {
     insecureSkipTLSVerify: true,
 
@@ -43,19 +64,14 @@ export const options = {
         },
         [MAIN_SCENARIO]: {
             executor: "ramping-arrival-rate",
-            startRate: 1,
+            startRate: START_RPS,
             timeUnit: "1s",
-            startTime: WARMUP_DURATION,
-            stages: [
-                {duration: "5s", target: 1},
-                {duration: "15s", target: 50},
-                {duration: "30s", target: 50},
-                {duration: "120s", target: 75},
-                {duration: "30s", target: 0},
-            ],
-            preAllocatedVUs: 200,
-            maxVUs: 250,
-            gracefulStop: "30s",
+            preAllocatedVUs: PRE_VUS,
+            maxVUs: MAX_VUS,
+            startTime: START_TIME,
+            stages: buildStages(),
+            tags: { phase: "step", test: MAIN_SCENARIO },
+            gracefulStop: "0s",
         },
     },
 
