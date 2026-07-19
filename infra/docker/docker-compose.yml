@@ -139,26 +139,28 @@ services:
           cpus: '1'
           memory: '1024M'
 
-  monitor:
+  dotnet_monitor:
+    container_name: dotnet_monitor
     image: mcr.microsoft.com/dotnet/monitor:9
-    environment:
-      - DOTNETMONITOR_DiagnosticPort__ConnectionMode=Listen
-      - DOTNETMONITOR_DiagnosticPort__EndpointName=/tmp/diag/dotnet-monitor.sock
-      - DOTNETMONITOR_Authentication__MonitorApiKey__Enabled=false
-      - DOTNETMONITOR_Urls=http://*:52323
+    restart: unless-stopped
     command:
       - collect
       - --no-auth
       - --diagnostic-port
       - /tmp/diag/dotnet-monitor.sock
+    environment:
+      - DOTNETMONITOR_DiagnosticPort__ConnectionMode=Listen
+      - DOTNETMONITOR_DiagnosticPort__EndpointName=/tmp/diag/dotnet-monitor.sock
+      - DOTNETMONITOR_Authentication__MonitorApiKey__Enabled=false
+      - DOTNETMONITOR_Urls=http://*:52323
     ports:
       - "52323:52323"
       - "52325:52325"
+    volumes:
+      - ./monitor-data/diag:/tmp/diag
     networks:
       - dotnet-diagnostics-lab-service-public
       - dotnet-diagnostics-lab-service-internal
-    volumes:
-      - ./monitor-data/diag:/tmp/diag
     logging:
       driver: "json-file"
       options:
@@ -167,21 +169,16 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.50'
+          cpus: '1'
           memory: 512M
         reservations:
-          cpus: '0.50'
+          cpus: '1'
           memory: 512M
 
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
     restart: unless-stopped
-    ports:
-      - "19090:9090"
-    networks:
-      - dotnet-diagnostics-lab-service-public
-      - dotnet-diagnostics-lab-service-internal
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--web.enable-lifecycle'
@@ -191,8 +188,13 @@ services:
       timeout: 3s
       retries: 3
       start_period: 5s
+    ports:
+      - "19090:9090"
     volumes:
       - ./prometheus/prometheus-config.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - dotnet-diagnostics-lab-service-public
+      - dotnet-diagnostics-lab-service-internal
     logging:
       driver: "json-file"
       options:
@@ -208,24 +210,26 @@ services:
           memory: 256M
 
   grafana:
+    container_name: grafana
     image: grafana/grafana-oss
-    ports:
-      - "3000:3000"
-    networks:
-      - dotnet-diagnostics-lab-service-public
-      - dotnet-diagnostics-lab-service-internal
-    volumes:
-      - "./grafana/provisioning/:/etc/grafana/provisioning/"
-      - "./grafana/dashboards/:/var/lib/grafana/dashboards/"
-    depends_on:
-      prometheus:
-        condition: service_healthy
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD", "grafana-cli", "plugins", "ls"]
+      test: [ "CMD", "grafana-cli", "plugins", "ls" ]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 20s
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./grafana/provisioning/:/etc/grafana/provisioning/"
+      - "./grafana/dashboards/:/var/lib/grafana/dashboards/"
+    networks:
+      - dotnet-diagnostics-lab-service-public
+      - dotnet-diagnostics-lab-service-internal
     logging:
       driver: "json-file"
       options:

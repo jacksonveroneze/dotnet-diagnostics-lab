@@ -33,10 +33,20 @@ RUN dotnet publish ./main/Api/Api.csproj \
 # =====================================================
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 
-ENV DOTNET_GCDynamicAdaptationMode=1
+ENV ASPNETCORE_ENVIRONMENT=Production \
+    DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
+    DOTNET_GCDynamicAdaptationMode=1 \
+    CORECLR_ENABLE_PROFILING=0 \
+    TZ=America/Sao_Paulo \
+    LANG=pt_BR.UTF-8 \
+    LANGUAGE=pt_BR.UTF-8 \
+    LC_ALL=pt_BR.UTF-8
+
+HEALTHCHECK --interval=10s --timeout=1s --start-period=5s --retries=3 \
+  CMD curl --silent --fail http://localhost:8080/health?source=docker-inner || exit 1
 
 COPY --from=publish /publish /home/app
 
 WORKDIR /home/app
 
-ENTRYPOINT ["dotnet", "/home/app/Api.dll"]
+ENTRYPOINT ["dotnet", "Api.dll"]
