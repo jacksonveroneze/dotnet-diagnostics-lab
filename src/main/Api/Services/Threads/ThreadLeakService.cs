@@ -8,9 +8,9 @@ namespace JacksonVeroneze.NET.GRPCServer.Api.Services.Threads;
 public class ThreadLeakService : IThreadLeakService
 {
     private const int MinDelayMs = 100;
-    private const int MaxDelayMs = 10000;
+    private const int MaxDelayMs = 50000;
     private const int MinTaskCount = 1;
-    private const int MaxTaskCount = 10;
+    private const int MaxTaskCount = 99;
 
     public async Task<SimulationResult> RunAsync(
         int delayMs,

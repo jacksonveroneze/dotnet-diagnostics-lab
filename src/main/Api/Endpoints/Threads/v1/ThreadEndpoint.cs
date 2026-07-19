@@ -40,7 +40,7 @@ internal static class ThreadEndpoint
                     [FromServices] IThreadPoolStarvationService service,
                     int delayMs,
                     int taskCount,
-                    CancellationToken cancellationToken = default) =>
+                    CancellationToken cancellationToken) =>
                 {
                     SimulationResult result = await service.RunAsync(
                         delayMs, taskCount, cancellationToken);
@@ -59,7 +59,7 @@ internal static class ThreadEndpoint
                     [FromServices] IThreadLeakService service,
                     int delayMs,
                     int taskCount,
-                    CancellationToken cancellationToken = default) =>
+                    CancellationToken cancellationToken) =>
                 {
                     SimulationResult result = await service.RunAsync(
                         delayMs, taskCount, cancellationToken);
@@ -78,7 +78,7 @@ internal static class ThreadEndpoint
                     [FromServices] ILockContentionService service,
                     int delayMs,
                     int taskCount,
-                    CancellationToken cancellationToken = default) =>
+                    CancellationToken cancellationToken) =>
                 {
                     SimulationResult result = await service.RunAsync(
                         delayMs, taskCount, cancellationToken);
