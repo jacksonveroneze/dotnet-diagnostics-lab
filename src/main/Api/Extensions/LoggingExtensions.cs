@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
-using JacksonVeroneze.NET.GRPCServer.Api.Configurations;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Configurations;
 using Serilog;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Extensions;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Extensions;
 
 [ExcludeFromCodeCoverage]
 public static class LoggingExtensions

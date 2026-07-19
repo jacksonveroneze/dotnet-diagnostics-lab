@@ -1,4 +1,4 @@
-namespace JacksonVeroneze.NET.GRPCServer.Api.Models;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Models;
 
 public record GcCount(int Gen0, int Gen1, int Gen2);
 

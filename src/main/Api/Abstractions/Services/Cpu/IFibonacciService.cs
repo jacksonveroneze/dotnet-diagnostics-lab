@@ -1,6 +1,6 @@
-using JacksonVeroneze.NET.GRPCServer.Api.Models;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Models;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Cpu;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Cpu;
 
 public interface IFibonacciService
 {

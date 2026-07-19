@@ -1,6 +1,6 @@
-using JacksonVeroneze.NET.GRPCServer.Api.Models;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Models;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Thread;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Thread;
 
 public interface IThreadLeakService
 {

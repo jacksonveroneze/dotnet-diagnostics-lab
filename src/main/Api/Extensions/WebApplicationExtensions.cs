@@ -1,9 +1,9 @@
-using JacksonVeroneze.NET.GRPCServer.Api.Endpoints.Cpu.v1;
-using JacksonVeroneze.NET.GRPCServer.Api.Endpoints.Memory.v1;
-using JacksonVeroneze.NET.GRPCServer.Api.Endpoints.Threads.v1;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Endpoints.Cpu.v1;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Endpoints.Memory.v1;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Endpoints.Threads.v1;
 using Scalar.AspNetCore;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Extensions;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Extensions;
 
 internal static class WebApplicationExtensions
 {

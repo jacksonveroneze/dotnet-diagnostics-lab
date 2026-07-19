@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Extensions;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Extensions;
 
 [ExcludeFromCodeCoverage]
 public static class JsonOptionsExtensions

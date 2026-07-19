@@ -1,7 +1,7 @@
 import {factoryHeaders, runner} from "./util.js";
 
-const BASE_URL = __ENV.BASE_URL || "http://localhost:8080";
-const BASE_PATH = __ENV.BASE_URL || "dotnet-diagnostics-lab";
+const BASE_URL = __ENV.BASE_URL || "http://localhost:7000";
+const BASE_PATH = __ENV.BASE_URL || "";
 const READ_TIMEOUT = __ENV.READ_TIMEOUT || "10s";
 const TEST_TYPE = __ENV.TEST_TYPE;
 
@@ -27,7 +27,7 @@ const TOTAL_STEPS = Number(__ENV.STEPS || 10);
 const STEP_DURATION_SECONDS = Number(__ENV.STEP_DURATION || 15);
 
 const TEST_CASES = {
-    "string-allocation": {path: "memory/string-allocation", params: {iterations: 5, stringLength: 500}},
+    "string-allocation": {path: "memory/string-allocation", params: {iterations: 10, stringLength: 500}},
     "leak-static": {path: "memory/leak-static", params: {objectCount: 100, objectSizeBytes: 200}},
     "gen2-promotion": {path: "memory/gen2-promotion", params: {objectCount: 1000, objectSizeBytes: 10000}},
     "loh-pressure": {path: "memory/loh-pressure", params: {objectCount: 200, objectSizeBytes: 100000}},
@@ -42,7 +42,7 @@ function buildUrl({path, params}) {
         .map(([key, value]) => `${key}=${value}`)
         .join("&");
 
-    return `${BASE_URL}/${BASE_PATH}/diagnostics/v1/${path}?${query}`;
+    return `${BASE_URL}/${BASE_PATH}diagnostics/v1/${path}?${query}`;
 }
 
 function buildStages() {

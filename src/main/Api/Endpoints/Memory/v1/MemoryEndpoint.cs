@@ -1,9 +1,9 @@
 using Asp.Versioning;
-using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
-using JacksonVeroneze.NET.GRPCServer.Api.Models;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Memory;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Endpoints.Memory.v1;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Endpoints.Memory.v1;
 
 internal static class MemoryEndpoint
 {

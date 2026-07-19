@@ -1,8 +1,8 @@
-using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
-using JacksonVeroneze.NET.GRPCServer.Api.Helpers;
-using JacksonVeroneze.NET.GRPCServer.Api.Models;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Memory;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Helpers;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Models;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Services.Memory;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Memory;
 
 public class StringAllocationService : IStringAllocationService
 {

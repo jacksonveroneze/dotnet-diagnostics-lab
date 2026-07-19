@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Asp.Versioning;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Extensions;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Extensions;
 
 [ExcludeFromCodeCoverage]
 public static class AppVersioningExtensions

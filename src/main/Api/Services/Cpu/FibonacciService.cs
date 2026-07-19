@@ -1,8 +1,8 @@
-using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Cpu;
-using JacksonVeroneze.NET.GRPCServer.Api.Helpers;
-using JacksonVeroneze.NET.GRPCServer.Api.Models;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Cpu;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Helpers;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Models;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Services.Cpu;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Cpu;
 
 public class FibonacciService : IFibonacciService
 {

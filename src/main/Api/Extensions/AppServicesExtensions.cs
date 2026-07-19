@@ -1,12 +1,12 @@
 using System.Diagnostics.CodeAnalysis;
-using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Cpu;
-using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Memory;
-using JacksonVeroneze.NET.GRPCServer.Api.Abstractions.Services.Thread;
-using JacksonVeroneze.NET.GRPCServer.Api.Services.Cpu;
-using JacksonVeroneze.NET.GRPCServer.Api.Services.Memory;
-using JacksonVeroneze.NET.GRPCServer.Api.Services.Threads;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Cpu;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Memory;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Thread;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Cpu;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Memory;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Threads;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Extensions;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Extensions;
 
 [ExcludeFromCodeCoverage]
 public static class AppServicesExtensions

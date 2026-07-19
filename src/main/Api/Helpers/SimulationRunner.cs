@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using JacksonVeroneze.NET.GRPCServer.Api.Models;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Models;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Helpers;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Helpers;
 
 internal static class SimulationRunner
 {

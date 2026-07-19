@@ -1,4 +1,4 @@
-using JacksonVeroneze.NET.GRPCServer.Api.Extensions;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

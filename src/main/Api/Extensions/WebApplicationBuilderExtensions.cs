@@ -1,7 +1,7 @@
-using JacksonVeroneze.NET.GRPCServer.Api.Configurations;
-using JacksonVeroneze.NET.GRPCServer.Api.Middlewares;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Configurations;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Middlewares;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Extensions;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Extensions;
 
 internal static class WebApplicationBuilderExtensions
 {

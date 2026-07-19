@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Middlewares;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Middlewares;
 
 internal sealed class CustomExceptionHandler(
     IProblemDetailsService problemDetailsService)

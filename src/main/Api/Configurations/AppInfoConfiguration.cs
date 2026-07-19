@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace JacksonVeroneze.NET.GRPCServer.Api.Configurations;
+namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Configurations;
 
 [ExcludeFromCodeCoverage]
 public sealed record AppInfoConfiguration
