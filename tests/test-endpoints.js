@@ -23,12 +23,12 @@ const MAX_VUS = Number(__ENV.MAX_VUS || 500);
 // Carga
 const START_RPS = Number(__ENV.START_RPS || 50);
 const STEP_RPS = Number(__ENV.STEP_RPS || 50);
-const TOTAL_STEPS = Number(__ENV.STEPS || 2);
+const TOTAL_STEPS = Number(__ENV.STEPS || 8);
 const STEP_DURATION_SECONDS = Number(__ENV.STEP_DURATION || 30);
 
 const TEST_CASES = {
-    "string-allocation": {path: "memory/string-allocation", params: {iterations: 100, stringLength: 500}},
-    "leak-static": {path: "memory/leak-static", params: {objectCount: 1000, objectSizeBytes: 1000}},
+    "string-allocation": {path: "memory/string-allocation", params: {iterations: 10, stringLength: 500}},
+    "leak-static": {path: "memory/leak-static", params: {objectCount: 100, objectSizeBytes: 200}},
     "gen2-promotion": {path: "memory/gen2-promotion", params: {objectCount: 1000, objectSizeBytes: 10000}},
     "loh-pressure": {path: "memory/loh-pressure", params: {objectCount: 200, objectSizeBytes: 100000}},
     "thread-pool-starvation": {path: "thread/thread-pool-starvation", params: {delayMs: 10000, taskCount: 2}},
@@ -84,7 +84,7 @@ export const options = {
             duration: SHUTDOWN_DURATION_SECONDS + "s",
             preAllocatedVUs: 5,
             maxVUs: 10,
-            startTime: (WARMUP_DURATION_SECONDS + (TOTAL_STEPS * STEP_DURATION_SECONDS) + 1) + "s",
+            startTime: (WARMUP_DURATION_SECONDS + (TOTAL_STEPS * STEP_DURATION_SECONDS) + 2) + "s",
             gracefulStop: "0s",
         },
     },
