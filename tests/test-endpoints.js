@@ -21,13 +21,13 @@ const PRE_VUS = Number(__ENV.PRE_VUS || 100);
 const MAX_VUS = Number(__ENV.MAX_VUS || 500);
 
 // Carga
-const START_RPS = Number(__ENV.START_RPS || 50);
+const START_RPS = Number(__ENV.START_RPS || 15);
 const STEP_RPS = Number(__ENV.STEP_RPS || 50);
-const TOTAL_STEPS = Number(__ENV.STEPS || 8);
-const STEP_DURATION_SECONDS = Number(__ENV.STEP_DURATION || 30);
+const TOTAL_STEPS = Number(__ENV.STEPS || 10);
+const STEP_DURATION_SECONDS = Number(__ENV.STEP_DURATION || 15);
 
 const TEST_CASES = {
-    "string-allocation": {path: "memory/string-allocation", params: {iterations: 10, stringLength: 500}},
+    "string-allocation": {path: "memory/string-allocation", params: {iterations: 5, stringLength: 500}},
     "leak-static": {path: "memory/leak-static", params: {objectCount: 100, objectSizeBytes: 200}},
     "gen2-promotion": {path: "memory/gen2-promotion", params: {objectCount: 1000, objectSizeBytes: 10000}},
     "loh-pressure": {path: "memory/loh-pressure", params: {objectCount: 200, objectSizeBytes: 100000}},
