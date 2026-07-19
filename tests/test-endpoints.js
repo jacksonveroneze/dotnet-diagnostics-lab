@@ -9,12 +9,12 @@ const TEST_TYPE = __ENV.TEST_TYPE;
 const MAIN_SCENARIO = TEST_TYPE || "undefined_test_type";
 
 // Warmup
-const WARMUP_RATE = 1;
-const WARMUP_DURATION_SECONDS = 5;
+const WARMUP_RATE = Number(__ENV.WARMUP_RATE || 1);
+const WARMUP_DURATION_SECONDS = Number(__ENV.WARMUP_DURATION_SECONDS || 5);
 
 // Shutdown
-const SHUTDOWN_RATE = 1;
-const SHUTDOWN_DURATION_SECONDS = 5;
+const SHUTDOWN_RATE = Number(__ENV.SHUTDOWN_RATE || 1);
+const SHUTDOWN_DURATION_SECONDS = Number(__ENV.SHUTDOWN_DURATION_SECONDS || 15);
 
 // k6 VUs
 const PRE_VUS = Number(__ENV.PRE_VUS || 100);
@@ -90,10 +90,10 @@ export const options = {
     },
 
     thresholds: {
-        [`checks{scenario:${MAIN_SCENARIO}}`]: ["rate>=0.99"],
-        [`http_req_failed{scenario:${MAIN_SCENARIO}}`]: ["rate<=0.01"],
-        [`http_req_duration{scenario:${MAIN_SCENARIO}}`]: ["p(95)<300"],
-        [`dropped_iterations{scenario:${MAIN_SCENARIO}}`]: ["count==0"],
+        [`checks{scenario:${MAIN_SCENARIO}}`]: ["rate >= 0.99"],
+        [`http_req_failed{scenario:${MAIN_SCENARIO}}`]: ["rate <= 0.01"],
+        [`http_req_duration{scenario:${MAIN_SCENARIO}}`]: ["p(95) < 300"],
+        [`dropped_iterations{scenario:${MAIN_SCENARIO}}`]: ["count == 0"],
     },
 
     summaryTrendStats: ["avg", "min", "med", "p(90)", "p(95)", "p(99)", "max"],
