@@ -1,7 +1,14 @@
 import {factoryHeaders, runner} from "./util.js";
 
-const BASE_URL = __ENV.BASE_URL || "http://localhost:7000";
-const BASE_PATH = __ENV.BASE_URL || "";
+//const BASE_URL = __ENV.BASE_URL || "http://10.0.0.150:7000";
+//const BASE_PATH = __ENV.BASE_URL || "";
+
+//const BASE_URL = __ENV.BASE_URL || "http://10.0.0.150:8080";
+//const BASE_PATH = __ENV.BASE_URL || "dotnet-diagnostics-lab/";
+
+const BASE_URL = __ENV.BASE_URL || "http://10.0.0.195:8080";
+const BASE_PATH = __ENV.BASE_URL || "dotnet-diagnostics-lab/";
+
 const READ_TIMEOUT = __ENV.READ_TIMEOUT || "10s";
 const TEST_TYPE = __ENV.TEST_TYPE;
 
@@ -107,9 +114,13 @@ export function setup() {
         );
     }
 
+    const url = buildUrl(TEST_CASES[TEST_TYPE]);
+
+    console.log(url)
+
     return {
         headers: factoryHeaders(),
-        url: buildUrl(TEST_CASES[TEST_TYPE])
+        url: url
     };
 }
 

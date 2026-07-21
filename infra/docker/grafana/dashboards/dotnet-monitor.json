@@ -4,22 +4,20 @@
   "metadata": {
     "name": "fdd09c1e-ae4c-4ea5-8bc3-1ea7a0689e96",
     "namespace": "default",
-    "uid": "89f7e27a-fe62-4bc6-8e7e-8a8b4244ea73",
-    "resourceVersion": "1784484183042982",
-    "generation": 9,
-    "creationTimestamp": "2026-07-19T13:29:35Z",
+    "uid": "eec337b2-e79a-470e-b1b5-ddf017f9b256",
+    "resourceVersion": "1784510490858002",
+    "generation": 1,
+    "creationTimestamp": "2026-07-20T01:21:30Z",
     "labels": {
-      "grafana.app/deprecatedInternalID": "2675209241927680"
+      "grafana.app/deprecatedInternalID": "2854372085784576"
     },
     "annotations": {
       "grafana.app/createdBy": "access-policy:service",
       "grafana.app/managedBy": "classic-file-provisioning",
       "grafana.app/managerId": "default",
-      "grafana.app/sourceChecksum": "94830a301acc104991500e0671c44136",
+      "grafana.app/sourceChecksum": "e675b8e9aafccd11f2e992cedcf7da11",
       "grafana.app/sourcePath": "/var/lib/grafana/dashboards/dotnet-monitor.json",
-      "grafana.app/sourceTimestamp": "1784484177000",
-      "grafana.app/updatedBy": "access-policy:service",
-      "grafana.app/updatedTimestamp": "2026-07-19T18:03:03Z",
+      "grafana.app/sourceTimestamp": "1784484404000",
       "grafana.app/folder": ""
     }
   },
@@ -50,7 +48,7 @@
         }
       }
     ],
-    "cursorSync": "Off",
+    "cursorSync": "Crosshair",
     "description": "This dotnet-monitor dashboard is designed to show the default .NET metrics scraped using Managed Prometheus on Azure.",
     "editable": true,
     "elements": {
@@ -1987,7 +1985,7 @@
           {
             "kind": "RowsLayoutRow",
             "spec": {
-              "collapse": true,
+              "collapse": false,
               "layout": {
                 "kind": "GridLayout",
                 "spec": {
@@ -2058,7 +2056,7 @@
     "preload": false,
     "tags": [],
     "timeSettings": {
-      "autoRefresh": "30s",
+      "autoRefresh": "5s",
       "autoRefreshIntervals": [
         "5s",
         "10s",
@@ -2072,10 +2070,11 @@
         "1d"
       ],
       "fiscalYearStartMonth": 0,
-      "from": "now-3h",
+      "from": "now-5m",
       "hideTimepicker": false,
       "timezone": "browser",
-      "to": "now"
+      "to": "now",
+      "weekStart": "monday"
     },
     "title": "dotnet-monitor dashboard",
     "variables": [

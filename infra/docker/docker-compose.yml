@@ -244,6 +244,30 @@ services:
           cpus: '0.50'
           memory: 256M
 
+  k6_stress_test:
+    container_name: k6
+    image: grafana/k6:latest
+    tty: true
+    stdin_open: true
+    command: run /scripts/test-endpoints.js
+    volumes:
+      - "../../tests/:/scripts/"
+    networks:
+      - dotnet-diagnostics-lab-service-public
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "1m"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256M
+        reservations:
+          cpus: '1'
+          memory: 256M
+
 volumes:
   monitor-data:
   prometheus-data:
