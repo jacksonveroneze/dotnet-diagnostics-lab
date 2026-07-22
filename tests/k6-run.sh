@@ -5,14 +5,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
 readonly TEST_TYPES=(
-  string-allocation
-  leak-static
-  gen2-promotion
-  loh-pressure
+  memory-string-allocation
+  memory-leak-static
+  memory-gen2-promotion
+  memory-loh-pressure
+  memory-leak-event
+  memory-leak-cache
+  memory-leak-closure
+  memory-leak-cancellation-token-source
+  memory-leak-timer
   thread-pool-starvation
   thread-leak
-  lock-contention
-  fibonacci
+  thread-lock-contention
+  cpu-fibonacci
 )
 
 usage() {

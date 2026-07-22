@@ -28,7 +28,12 @@ internal static class MemoryEndpoint
         builder.AddStringAllocationEndpoint()
             .AddStaticLeakEndpoint()
             .AddGen2PromotionEndpoint()
-            .AddLohPressureEndpoint();
+            .AddLohPressureEndpoint()
+            .AddEventLeakEndpoint()
+            .AddCacheLeakEndpoint()
+            .AddClosureLeakEndpoint()
+            .AddCancellationTokenSourceLeakEndpoint()
+            .AddTimerLeakEndpoint();
 
         return app;
     }
@@ -97,6 +102,98 @@ internal static class MemoryEndpoint
                 {
                     SimulationResult result = service.Run(
                         objectCount, objectSizeBytes);
+
+                    return Results.Ok(result);
+                })
+                .Produces<SimulationResult>()
+                .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status500InternalServerError);
+            return builder;
+        }
+
+        private RouteGroupBuilder AddEventLeakEndpoint()
+        {
+            builder.MapGet("leak-event", (
+                    [FromServices] IEventLeakService service,
+                    int subscriberCount,
+                    int payloadSizeBytes) =>
+                {
+                    SimulationResult result = service.Run(
+                        subscriberCount, payloadSizeBytes);
+
+                    return Results.Ok(result);
+                })
+                .Produces<SimulationResult>()
+                .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status500InternalServerError);
+            return builder;
+        }
+
+        private RouteGroupBuilder AddCacheLeakEndpoint()
+        {
+            builder.MapGet("leak-cache", async (
+                    [FromServices] ICacheLeakService service,
+                    int objectCount,
+                    int objectSizeBytes,
+                    CancellationToken cancellationToken) =>
+                {
+                    SimulationResult result = await service.RunAsync(
+                        objectCount, objectSizeBytes, cancellationToken);
+
+                    return Results.Ok(result);
+                })
+                .Produces<SimulationResult>()
+                .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status500InternalServerError);
+            return builder;
+        }
+
+        private RouteGroupBuilder AddClosureLeakEndpoint()
+        {
+            builder.MapGet("leak-closure", (
+                    [FromServices] IClosureLeakService service,
+                    int objectCount,
+                    int objectSizeBytes) =>
+                {
+                    SimulationResult result = service.Run(
+                        objectCount, objectSizeBytes);
+
+                    return Results.Ok(result);
+                })
+                .Produces<SimulationResult>()
+                .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status500InternalServerError);
+            return builder;
+        }
+
+        private RouteGroupBuilder AddCancellationTokenSourceLeakEndpoint()
+        {
+            builder.MapGet("leak-cancellation-token-source", async (
+                    [FromServices] ICancellationTokenSourceLeakService service,
+                    int delayMs,
+                    int taskCount,
+                    CancellationToken cancellationToken) =>
+                {
+                    SimulationResult result = await service.RunAsync(
+                        delayMs, taskCount, cancellationToken);
+
+                    return Results.Ok(result);
+                })
+                .Produces<SimulationResult>()
+                .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status500InternalServerError);
+            return builder;
+        }
+
+        private RouteGroupBuilder AddTimerLeakEndpoint()
+        {
+            builder.MapGet("leak-timer", (
+                    [FromServices] ITimerLeakService service,
+                    int timerCount,
+                    int intervalMs) =>
+                {
+                    SimulationResult result = service.Run(
+                        timerCount, intervalMs);
 
                     return Results.Ok(result);
                 })
