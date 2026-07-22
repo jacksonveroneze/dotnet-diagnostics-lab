@@ -32,7 +32,7 @@ internal static class MemoryEndpoint
             .AddEventLeakEndpoint()
             .AddCacheLeakEndpoint()
             .AddClosureLeakEndpoint()
-            .AddCtsLeakEndpoint()
+            .AddCancellationTokenSourceLeakEndpoint()
             .AddTimerLeakEndpoint();
 
         return app;
@@ -131,13 +131,14 @@ internal static class MemoryEndpoint
 
         private RouteGroupBuilder AddCacheLeakEndpoint()
         {
-            builder.MapGet("leak-cache", (
+            builder.MapGet("leak-cache", async (
                     [FromServices] ICacheLeakService service,
                     int objectCount,
-                    int objectSizeBytes) =>
+                    int objectSizeBytes,
+                    CancellationToken cancellationToken) =>
                 {
-                    SimulationResult result = service.Run(
-                        objectCount, objectSizeBytes);
+                    SimulationResult result = await service.RunAsync(
+                        objectCount, objectSizeBytes, cancellationToken);
 
                     return Results.Ok(result);
                 })
@@ -165,10 +166,10 @@ internal static class MemoryEndpoint
             return builder;
         }
 
-        private RouteGroupBuilder AddCtsLeakEndpoint()
+        private RouteGroupBuilder AddCancellationTokenSourceLeakEndpoint()
         {
-            builder.MapGet("leak-cts", async (
-                    [FromServices] ICtsLeakService service,
+            builder.MapGet("leak-cancellation-token-source", async (
+                    [FromServices] ICancellationTokenSourceLeakService service,
                     int delayMs,
                     int taskCount,
                     CancellationToken cancellationToken) =>

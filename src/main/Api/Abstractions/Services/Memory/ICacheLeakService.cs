@@ -4,7 +4,8 @@ namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Mem
 
 public interface ICacheLeakService
 {
-    public SimulationResult Run(
+    public Task<SimulationResult> RunAsync(
         int objectCount,
-        int objectSizeBytes);
+        int objectSizeBytes,
+        CancellationToken cancellationToken);
 }

@@ -4,7 +4,7 @@ using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Models;
 
 namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Memory;
 
-public class CtsLeakService : ICtsLeakService
+public class CancellationTokenSourceLeakService : ICancellationTokenSourceLeakService
 {
     private const int MinTaskCount = 1;
     private const int MaxTaskCount = 10_000;

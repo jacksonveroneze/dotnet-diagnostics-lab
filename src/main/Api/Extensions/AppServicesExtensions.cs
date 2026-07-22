@@ -19,9 +19,9 @@ public static class AppServicesExtensions
         services.AddScoped<IStringAllocationService, StringAllocationService>();
         services.AddScoped<ILohPressureService, LohPressureService>();
         services.AddSingleton<IEventLeakService, EventLeakService>();
-        services.AddSingleton<ICacheLeakService, CacheLeakService>();
+        services.AddScoped<ICacheLeakService, CacheLeakService>();
         services.AddSingleton<IClosureLeakService, ClosureLeakService>();
-        services.AddScoped<ICtsLeakService, CtsLeakService>();
+        services.AddScoped<ICancellationTokenSourceLeakService, CancellationTokenSourceLeakService>();
         services.AddSingleton<ITimerLeakService, TimerLeakService>();
 
         services.AddScoped<IThreadPoolStarvationService, ThreadPoolStarvationService>();
