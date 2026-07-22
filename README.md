@@ -1,9 +1,11 @@
 # .NET Diagnostics Lab
 
 API de laboratório para simular cenários de diagnóstico de performance e memória em .NET
-(alta alocação, promoção para Gen2, pressão na LOH, memory leak estático, thread pool
-starvation, thread leak, lock contention e CPU-bound), permitindo observar o comportamento
-via ferramentas de diagnóstico (dotnet-counters, dotnet-trace, dotnet-gcdump, profilers, etc.).
+(alta alocação, promoção para Gen2, pressão na LOH, memory leak estático, event handler leak,
+cache sem expiração, closure capturando referências, CancellationTokenSource não disposto,
+Timer nunca parado, thread pool starvation, thread leak, lock contention e CPU-bound),
+permitindo observar o comportamento via ferramentas de diagnóstico (dotnet-counters,
+dotnet-trace, dotnet-gcdump, profilers, etc.).
 
 ## Executando
 
@@ -117,6 +119,90 @@ Exemplo:
 
 ```
 GET /diagnostics/v1/memory/loh-pressure?objectCount=50&objectSizeBytes=100000
+```
+
+### `GET /diagnostics/v1/memory/leak-event`
+
+Simula um memory leak por event handler: cria subscribers que se inscrevem em um evento de
+um publisher `static` e nunca se desinscrevem, mantendo os subscribers (e seus payloads) vivos
+indefinidamente.
+
+| Parâmetro          | Tipo | Obrigatório | Min | Max     | Descrição                                  |
+|---------------------|------|-------------|-----|---------|-----------------------------------------------|
+| `subscriberCount`   | int  | Sim         | 1   | 10000   | Quantidade de subscribers criados e inscritos. |
+| `payloadSizeBytes`  | int  | Sim         | 1   | 1048576 | Tamanho do payload (`byte[]`) de cada subscriber. |
+
+Exemplo:
+
+```
+GET /diagnostics/v1/memory/leak-event?subscriberCount=100&payloadSizeBytes=50000
+```
+
+### `GET /diagnostics/v1/memory/leak-cache`
+
+Simula um cache sem expiração: cada chamada insere novos objetos com chave sempre única no
+`HybridCache` já registrado na aplicação, com expiração configurada para uma duração
+efetivamente muito longa (o `HybridCache` não suporta expiração infinita de verdade), fazendo
+o cache crescer indefinidamente.
+
+| Parâmetro         | Tipo | Obrigatório | Min | Max       | Descrição                              |
+|-------------------|------|-------------|-----|-----------|------------------------------------------|
+| `objectCount`     | int  | Sim         | 1   | 10000     | Quantidade de objetos inseridos no cache. |
+| `objectSizeBytes` | int  | Sim         | 1   | 1048576   | Tamanho de cada objeto em bytes.          |
+
+Exemplo:
+
+```
+GET /diagnostics/v1/memory/leak-cache?objectCount=100&objectSizeBytes=10000
+```
+
+### `GET /diagnostics/v1/memory/leak-closure`
+
+Simula uma closure que captura referências: cria processadores com um `Timer` cujo handler de
+`Elapsed` captura um campo grande da instância; o timer nunca é parado e a instância é mantida
+viva em uma lista `static` compartilhada entre requisições.
+
+| Parâmetro         | Tipo | Obrigatório | Min | Max       | Descrição                              |
+|-------------------|------|-------------|-----|-----------|------------------------------------------|
+| `objectCount`     | int  | Sim         | 1   | 10000     | Quantidade de processadores criados.      |
+| `objectSizeBytes` | int  | Sim         | 1   | 1048576   | Tamanho do campo capturado pela closure (bytes). |
+
+Exemplo:
+
+```
+GET /diagnostics/v1/memory/leak-closure?objectCount=50&objectSizeBytes=100000
+```
+
+### `GET /diagnostics/v1/memory/leak-cancellation-token-source`
+
+Simula `CancellationTokenSource` não disposto: para cada task, cria um `CancellationTokenSource`
+e um linked token, nunca chamando `Dispose()` em nenhum dos dois.
+
+| Parâmetro   | Tipo | Obrigatório | Min | Max   | Descrição                                |
+|-------------|------|-------------|-----|-------|---------------------------------------------|
+| `delayMs`   | int  | Sim         | 1   | 60000 | Tempo de delay (ms) de cada task.           |
+| `taskCount` | int  | Sim         | 1   | 10000 | Quantidade de tasks/CancellationTokenSource criados. |
+
+Exemplo:
+
+```
+GET /diagnostics/v1/memory/leak-cancellation-token-source?delayMs=10000&taskCount=2
+```
+
+### `GET /diagnostics/v1/memory/leak-timer`
+
+Simula um `Timer` nunca parado: cria instâncias de `System.Timers.Timer` já iniciadas e
+mantidas em uma lista `static` compartilhada entre requisições, sem nunca chamar `Stop()`/`Dispose()`.
+
+| Parâmetro     | Tipo | Obrigatório | Min | Max      | Descrição                          |
+|---------------|------|-------------|-----|----------|---------------------------------------|
+| `timerCount`  | int  | Sim         | 1   | 10000    | Quantidade de timers criados.         |
+| `intervalMs`  | int  | Sim         | 1   | 3600000  | Intervalo (ms) de disparo de cada timer. |
+
+Exemplo:
+
+```
+GET /diagnostics/v1/memory/leak-timer?timerCount=100&intervalMs=30000
 ```
 
 ---
