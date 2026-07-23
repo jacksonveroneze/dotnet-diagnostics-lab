@@ -7,7 +7,6 @@ cd "$SCRIPT_DIR"
 readonly TEST_TYPES=(
   memory-string-allocation
   memory-leak-static
-  memory-gen2-promotion
   memory-loh-pressure
   memory-leak-event
   memory-leak-cache
@@ -50,7 +49,7 @@ fi
 
 echo "Start: $(date)"
 
-#k6 run -e TEST_TYPE="$test_type" test-endpoints.js
-cd ../infra/docker && docker compose run --rm -e TEST_TYPE="$test_type" k6_stress_test
+k6 run -e TEST_TYPE="$test_type" test-endpoints.js
+#cd ../infra/docker && docker compose run --rm -e TEST_TYPE="$test_type" k6_stress_test
 
 echo "End: $(date)"

@@ -45,7 +45,6 @@ public class TimerLeakService : ITimerLeakService
         }
     }
 
-#pragma warning disable CA1001 // Intentional: simulates a Timer-owning type that is never disposed.
     private sealed class TimerHolder(double intervalMs)
     {
         private readonly Timer _timer = new(intervalMs);
@@ -55,5 +54,4 @@ public class TimerLeakService : ITimerLeakService
             _timer.Start();
         }
     }
-#pragma warning restore CA1001
 }

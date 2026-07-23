@@ -20,7 +20,7 @@ public class StringAllocationService : IStringAllocationService
         ArgumentOutOfRangeException.ThrowIfLessThan(stringLength, MinStringLength);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(stringLength, MaxStringLength);
 
-        return SimulationRunner.Run(() 
+        return SimulationRunner.Run(()
             => InternalRun(iterations, stringLength));
     }
 
@@ -29,13 +29,12 @@ public class StringAllocationService : IStringAllocationService
         int stringLength)
     {
         var chunk = new string('_', stringLength);
-        
+
         var acc = string.Empty;
 
         for (var i = 0; i < iterations; i++)
         {
-            acc += chunk + Environment.NewLine;
-            acc += chunk + Environment.NewLine;
+            acc += $"{chunk}_{i}" + Environment.NewLine;
         }
     }
 }

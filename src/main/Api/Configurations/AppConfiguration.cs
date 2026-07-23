@@ -5,8 +5,6 @@ namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Configurations;
 [ExcludeFromCodeCoverage]
 public sealed record AppConfiguration
 {
-    public bool Type { get; set; }
-    
     public AppInfoConfiguration? Application { get; init; }
 
     public string AppName =>

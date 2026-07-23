@@ -48,12 +48,10 @@ public class EventLeakService : IEventLeakService
             DataReceived += subscriber.OnDataReceived;
         }
 
-#pragma warning disable S1144 // Intentional: never invoked, matches the leaked-subscriber scenario being simulated.
         public void Publish()
         {
             DataReceived?.Invoke(this, EventArgs.Empty);
         }
-#pragma warning restore S1144
     }
 
     private sealed class EventSubscriber(int payloadSizeBytes)

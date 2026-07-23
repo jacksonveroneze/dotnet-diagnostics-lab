@@ -14,7 +14,6 @@ public static class AppServicesExtensions
     public static IServiceCollection AddApplicationServices(
         this IServiceCollection services)
     {
-        services.AddScoped<IGen2PromotionService, Gen2PromotionService>();
         services.AddSingleton<IMemoryLeakStaticService, MemoryLeakStaticService>();
         services.AddScoped<IStringAllocationService, StringAllocationService>();
         services.AddScoped<ILohPressureService, LohPressureService>();
