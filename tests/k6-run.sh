@@ -17,6 +17,9 @@ readonly TEST_TYPES=(
   thread-leak
   thread-lock-contention
   cpu-fibonacci
+  cpu-regex-backtracking
+  exception-argument
+  exception-unhandled
 )
 
 usage() {

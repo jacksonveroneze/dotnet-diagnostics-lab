@@ -19,12 +19,14 @@ export function runner(data, timeout, testType) {
         tags: { name: testType },
     });
 
-    if (res.status !== 200) {
+    const expectedStatus = data.expectedStatus || 200;
+
+    if (res.status !== expectedStatus) {
         console.error(`Error occurred: ${res.status} - ${res.body}`);
     }
 
     const ok = check(res, {
-        "status is OK": (response) => response.status === 200,
+        "status is expected": (response) => response.status === expectedStatus,
     });
 
     if (!ok){

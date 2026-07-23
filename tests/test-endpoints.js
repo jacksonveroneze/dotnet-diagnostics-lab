@@ -45,7 +45,10 @@ const TEST_CASES = {
     "thread-pool-starvation": {path: "thread/thread-pool-starvation", params: {delayMs: 10000, taskCount: 2}},
     "thread-leak": {path: "thread/thread-leak", params: {delayMs: 10000, taskCount: 2}},
     "thread-lock-contention": {path: "thread/lock-contention", params: {delayMs: 10000, taskCount: 2}},
-    "cpu-fibonacci": {path: "cpu/fibonacci", params: {sequencePosition: 32}}
+    "cpu-fibonacci": {path: "cpu/fibonacci", params: {sequencePosition: 32}},
+    "cpu-regex-backtracking": {path: "cpu/regex-backtracking", params: {inputLength: 25}},
+    "exception-argument": {path: "exception/throw", params: {type: "Argument"}, expectedStatus: 400},
+    "exception-unhandled": {path: "exception/throw", params: {type: "Unhandled"}, expectedStatus: 500}
 };
 
 function buildUrl({path, params}) {
@@ -124,7 +127,8 @@ export function setup() {
 
     return {
         headers: factoryHeaders(),
-        url: url
+        url: url,
+        expectedStatus: TEST_CASES[TEST_TYPE].expectedStatus || 200
     };
 }
 

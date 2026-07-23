@@ -1,8 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Cpu;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Exception;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Memory;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Thread;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Cpu;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Exception;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Memory;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Threads;
 
@@ -28,6 +30,9 @@ public static class AppServicesExtensions
         services.AddScoped<ILockContentionService, LockContentionService>();
 
         services.AddScoped<IFibonacciService, FibonacciService>();
+        services.AddScoped<IRegexBacktrackingService, RegexBacktrackingService>();
+
+        services.AddScoped<IExceptionSimulationService, ExceptionSimulationService>();
 
         return services;
     }

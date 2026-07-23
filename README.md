@@ -280,3 +280,57 @@ Exemplo:
 ```
 GET /diagnostics/v1/cpu/fibonacci?sequencePosition=35
 ```
+
+### `GET /diagnostics/v1/cpu/regex-backtracking`
+
+Simula um ReDoS (Regular Expression Denial of Service): usa uma regex vulnerável a
+backtracking catastrófico (`^(a+)+$`, grupo aninhado com quantificador) contra um
+input que quase casa, forçando o motor de regex a explorar um número exponencial de
+combinações antes de falhar.
+
+| Parâmetro     | Tipo | Obrigatório | Min | Max | Descrição                                             |
+|---------------|------|-------------|-----|-----|--------------------------------------------------------|
+| `inputLength` | int  | Sim         | 1   | 30  | Quantidade de caracteres `'a'` no input (custo ~O(2^n)). |
+
+Valores próximos do máximo demoram desproporcionalmente mais (crescimento
+exponencial) — isso é o comportamento esperado do cenário, não um bug do
+endpoint. Comece com valores baixos (ex.: 15-20) antes de subir.
+
+Exemplo:
+
+```
+GET /diagnostics/v1/cpu/regex-backtracking?inputLength=25
+```
+
+---
+
+## Exception (`diagnostics/v1/exception`)
+
+Simulações relacionadas ao tratamento global de exceções.
+
+### `GET /diagnostics/v1/exception/throw`
+
+Lança deliberadamente uma exceção, permitindo observar o pipeline de tratamento
+de erro (`GlobalExceptionHandler`, resposta em `ProblemDetails`, logs/traces de
+exceção).
+
+| Parâmetro | Tipo | Obrigatório | Valores               | Descrição                                             |
+|-----------|------|-------------|------------------------|--------------------------------------------------------|
+| `type`    | enum | Sim         | `Argument`, `Unhandled` | Tipo de exceção simulada (ver tabela de respostas abaixo). |
+
+| `type`      | Exceção lançada             | Status HTTP |
+|-------------|------------------------------|-------------|
+| `Argument`  | `ArgumentException`          | 400         |
+| `Unhandled` | `InvalidOperationException`  | 500         |
+
+Um valor inválido para `type` retorna `500 Internal Server Error`: a falha de
+binding do parâmetro lança `BadHttpRequestException`, que cai no branch padrão
+do `GlobalExceptionHandler` (mesmo comportamento de qualquer parâmetro
+inválido nos demais endpoints, ex.: `sequencePosition=abc`).
+
+Exemplo:
+
+```
+GET /diagnostics/v1/exception/throw?type=Argument
+GET /diagnostics/v1/exception/throw?type=Unhandled
+```
