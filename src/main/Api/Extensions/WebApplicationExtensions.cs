@@ -1,4 +1,5 @@
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Endpoints.Cpu.v1;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Endpoints.Exception.v1;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Endpoints.Memory.v1;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Endpoints.Threads.v1;
 using Scalar.AspNetCore;
@@ -32,6 +33,7 @@ internal static class WebApplicationExtensions
         app.AddMemoryEndpoints();
         app.AddThreadEndpoints();
         app.AddCpuEndpoints();
+        app.AddExceptionEndpoints();
 
         return app;
     }

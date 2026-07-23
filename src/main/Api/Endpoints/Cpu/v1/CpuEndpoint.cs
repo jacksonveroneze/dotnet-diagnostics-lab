@@ -25,7 +25,8 @@ internal static class CpuEndpoint
                 .WithApiVersionSet(apiVersion)
                 .MapToApiVersion(Version);
 
-        builder.AddFibonacciEndpoint();
+        builder.AddFibonacciEndpoint()
+            .AddRegexBacktrackingEndpoint();
 
         return app;
     }
@@ -40,6 +41,23 @@ internal static class CpuEndpoint
                 {
                     SimulationResult result = service.Run(
                         sequencePosition);
+
+                    return Results.Ok(result);
+                })
+                .Produces<SimulationResult>()
+                .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status500InternalServerError);
+            return builder;
+        }
+
+        private RouteGroupBuilder AddRegexBacktrackingEndpoint()
+        {
+            builder.MapGet("regex-backtracking", (
+                    [FromServices] IRegexBacktrackingService service,
+                    int inputLength) =>
+                {
+                    SimulationResult result = service.Run(
+                        inputLength);
 
                     return Results.Ok(result);
                 })

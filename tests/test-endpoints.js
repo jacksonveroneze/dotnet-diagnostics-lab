@@ -1,13 +1,13 @@
 import {factoryHeaders, runner} from "./util.js";
 
-//const BASE_URL = __ENV.BASE_URL || "http://10.0.0.150:7000";
-//const BASE_PATH = __ENV.BASE_URL || "";
+const BASE_URL = __ENV.BASE_URL || "http://localhost:7000";
+const BASE_PATH = __ENV.BASE_URL || "";
 
 //const BASE_URL = __ENV.BASE_URL || "http://10.0.0.150:8080";
 //const BASE_PATH = __ENV.BASE_URL || "dotnet-diagnostics-lab/";
 
-const BASE_URL = __ENV.BASE_URL || "http://10.0.0.195:8080";
-const BASE_PATH = __ENV.BASE_URL || "dotnet-diagnostics-lab/";
+//const BASE_URL = __ENV.BASE_URL || "http://10.0.0.195:8080";
+//const BASE_PATH = __ENV.BASE_URL || "dotnet-diagnostics-lab/";
 
 const READ_TIMEOUT = __ENV.READ_TIMEOUT || "10s";
 const TEST_TYPE = __ENV.TEST_TYPE;
@@ -30,23 +30,25 @@ const MAX_VUS = Number(__ENV.MAX_VUS || 500);
 // Carga
 const START_RPS = Number(__ENV.START_RPS || 15);
 const STEP_RPS = Number(__ENV.STEP_RPS || 50);
-const TOTAL_STEPS = Number(__ENV.STEPS || 10);
-const STEP_DURATION_SECONDS = Number(__ENV.STEP_DURATION || 15);
+const TOTAL_STEPS = Number(__ENV.STEPS || 6);
+const STEP_DURATION_SECONDS = Number(__ENV.STEP_DURATION || 10);
 
 const TEST_CASES = {
-    "memory-string-allocation": {path: "memory/string-allocation", params: {iterations: 10, stringLength: 500}},
-    "memory-leak-static": {path: "memory/leak-static", params: {objectCount: 100, objectSizeBytes: 200}},
-    "memory-gen2-promotion": {path: "memory/gen2-promotion", params: {objectCount: 1000, objectSizeBytes: 10000}},
+    "memory-string-allocation": {path: "memory/string-allocation", params: {iterations: 10, stringLength: 250}},
+    "memory-leak-static": {path: "memory/leak-static", params: {objectCount: 200, objectSizeBytes: 500}},
     "memory-loh-pressure": {path: "memory/loh-pressure", params: {objectCount: 200, objectSizeBytes: 100000}},
-    "memory-leak-event": {path: "memory/leak-event", params: {subscriberCount: 100, payloadSizeBytes: 50000}},
-    "memory-leak-cache": {path: "memory/leak-cache", params: {objectCount: 100, objectSizeBytes: 10000}},
+    "memory-leak-event": {path: "memory/leak-event", params: {subscriberCount: 100, payloadSizeBytes: 500}},
+    "memory-leak-cache": {path: "memory/leak-cache", params: {objectCount: 10, objectSizeBytes: 5000}},
     "memory-leak-closure": {path: "memory/leak-closure", params: {objectCount: 50, objectSizeBytes: 100000}},
     "memory-leak-cancellation-token-source": {path: "memory/leak-cancellation-token-source", params: {delayMs: 10000, taskCount: 2}},
-    "memory-leak-timer": {path: "memory/leak-timer", params: {timerCount: 100, intervalMs: 30000}},
+    "memory-leak-timer": {path: "memory/leak-timer", params: {timerCount: 500, intervalMs: 3600000}},
     "thread-pool-starvation": {path: "thread/thread-pool-starvation", params: {delayMs: 10000, taskCount: 2}},
     "thread-leak": {path: "thread/thread-leak", params: {delayMs: 10000, taskCount: 2}},
     "thread-lock-contention": {path: "thread/lock-contention", params: {delayMs: 10000, taskCount: 2}},
     "cpu-fibonacci": {path: "cpu/fibonacci", params: {sequencePosition: 32}},
+    "cpu-regex-backtracking": {path: "cpu/regex-backtracking", params: {inputLength: 25}},
+    "exception-argument": {path: "exception/throw", params: {type: "Argument"}, expectedStatus: 400},
+    "exception-unhandled": {path: "exception/throw", params: {type: "Unhandled"}, expectedStatus: 500}
 };
 
 function buildUrl({path, params}) {
@@ -125,7 +127,8 @@ export function setup() {
 
     return {
         headers: factoryHeaders(),
-        url: url
+        url: url,
+        expectedStatus: TEST_CASES[TEST_TYPE].expectedStatus || 200
     };
 }
 

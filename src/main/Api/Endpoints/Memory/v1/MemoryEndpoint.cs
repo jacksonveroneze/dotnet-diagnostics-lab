@@ -27,13 +27,13 @@ internal static class MemoryEndpoint
 
         builder.AddStringAllocationEndpoint()
             .AddStaticLeakEndpoint()
-            .AddGen2PromotionEndpoint()
             .AddLohPressureEndpoint()
             .AddEventLeakEndpoint()
             .AddCacheLeakEndpoint()
             .AddClosureLeakEndpoint()
             .AddCancellationTokenSourceLeakEndpoint()
-            .AddTimerLeakEndpoint();
+            .AddTimerLeakEndpoint()
+            .AddGcCleanEndpoint();
 
         return app;
     }
@@ -67,24 +67,6 @@ internal static class MemoryEndpoint
                 {
                     SimulationResult result = service.Run(
                         objectCount, objectSizeBytes);
-                    return Results.Ok(result);
-                })
-                .Produces<SimulationResult>()
-                .Produces(StatusCodes.Status400BadRequest)
-                .Produces(StatusCodes.Status500InternalServerError);
-            return builder;
-        }
-
-        private RouteGroupBuilder AddGen2PromotionEndpoint()
-        {
-            builder.MapGet("gen2-promotion", (
-                    [FromServices] IGen2PromotionService service,
-                    int objectCount,
-                    int objectSizeBytes) =>
-                {
-                    SimulationResult result = service.Run(
-                        objectCount, objectSizeBytes);
-
                     return Results.Ok(result);
                 })
                 .Produces<SimulationResult>()
@@ -196,6 +178,22 @@ internal static class MemoryEndpoint
                         timerCount, intervalMs);
 
                     return Results.Ok(result);
+                })
+                .Produces<SimulationResult>()
+                .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status500InternalServerError);
+            return builder;
+        }
+        
+        private RouteGroupBuilder AddGcCleanEndpoint()
+        {
+            builder.MapGet("gc-clean", () =>
+                {
+                    GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
+                    GC.WaitForPendingFinalizers();
+                    GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
+
+                    return Results.Ok();
                 })
                 .Produces<SimulationResult>()
                 .Produces(StatusCodes.Status400BadRequest)

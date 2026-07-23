@@ -1,3 +1,4 @@
+using System.Globalization;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Memory;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Helpers;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Models;
@@ -11,7 +12,7 @@ public class MemoryLeakStaticService : IMemoryLeakStaticService
     private const int MinObjectSizeBytes = 1;
     private const int MaxObjectSizeBytes = 1_048_576;
 
-    private static readonly List<byte[]> LeakedObjects = [];
+    private static readonly List<Customer> LeakedObjects = [];
     private static readonly Lock LeakedObjectsLock = new();
 
     public SimulationResult Run(
@@ -35,7 +36,12 @@ public class MemoryLeakStaticService : IMemoryLeakStaticService
         {
             lock (LeakedObjectsLock)
             {
-                LeakedObjects.Add(new byte[objectSizeBytes]);
+                var customer = new Customer(
+                    Guid.NewGuid(),
+                    string.Create(CultureInfo.InvariantCulture, $"name_{i}"),
+                    new byte[objectSizeBytes]);
+                
+                LeakedObjects.Add(customer);
             }
         }
     }
