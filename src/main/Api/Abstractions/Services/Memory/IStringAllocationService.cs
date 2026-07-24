@@ -5,6 +5,5 @@ namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Mem
 public interface IStringAllocationService
 {
     SimulationResult Run(
-        int iterations,
-        int stringLength);
+        int iterations);
 }

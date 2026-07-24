@@ -60,18 +60,17 @@ Simulações relacionadas a alocação de memória e comportamento do Garbage Co
 
 ### `GET /diagnostics/v1/memory/string-allocation`
 
-Simula alta alocação de memória no heap através de concatenação de strings (gera muito
-lixo em Gen0/Gen1).
+Simula alta alocação de memória no heap gerando um CSV de pessoas aleatórias através de
+concatenação de strings (gera muito lixo em Gen0/Gen1).
 
-| Parâmetro     | Tipo | Obrigatório | Min | Max     | Descrição                                  |
-|---------------|------|-------------|-----|---------|---------------------------------------------|
-| `iterations`  | int  | Sim         | 1   | 100000  | Quantidade de iterações de concatenação.     |
-| `stringLength`| int  | Sim         | 1   | 99000   | Tamanho (em caracteres) de cada bloco.       |
+| Parâmetro    | Tipo | Obrigatório | Min | Max    | Descrição                              |
+|--------------|------|-------------|-----|--------|------------------------------------------|
+| `iterations` | int  | Sim         | 1   | 100000 | Quantidade de linhas (pessoas) do CSV.  |
 
 Exemplo:
 
 ```
-GET /diagnostics/v1/memory/string-allocation?iterations=1000&stringLength=500
+GET /diagnostics/v1/memory/string-allocation?iterations=1000
 ```
 
 ### `GET /diagnostics/v1/memory/leak-static`
