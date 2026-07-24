@@ -30,19 +30,27 @@ public class LohPressureService : ILohPressureService
     {
         List<byte[]> retained = new(objectCount / 2);
 
-        for (var objectIndex = 0; objectIndex < objectCount; objectIndex++)
+        for (var i = 0; i < objectCount; i++)
         {
-            var currentSizeBytes = objectIndex % 2 == 0
+            var currentSizeBytes = i % 2 == 0
                 ? objectSizeBytes
                 : objectSizeBytes * 3 / 4;
 
-            var buffer = new byte[currentSizeBytes];
-            buffer[0] = 1;
+            RetainBytes(retained, currentSizeBytes, i % 2 == 0);
+        }
+    }
 
-            if (objectIndex % 2 == 0)
-            {
-                retained.Add(buffer);
-            }
+    private static void RetainBytes(
+        List<byte[]> retained,
+        int currentSizeBytes,
+        bool retain)
+    {
+        var buffer = new byte[currentSizeBytes];
+        buffer[0] = 1;
+
+        if (retain)
+        {
+            retained.Add(buffer);
         }
     }
 }

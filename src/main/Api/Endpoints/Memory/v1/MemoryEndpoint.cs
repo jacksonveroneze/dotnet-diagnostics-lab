@@ -44,11 +44,10 @@ internal static class MemoryEndpoint
         {
             builder.MapGet("string-allocation", (
                     [FromServices] IStringAllocationService service,
-                    int iterations,
-                    int stringLength) =>
+                    int iterations) =>
                 {
                     SimulationResult result = service.Run(
-                        iterations, stringLength);
+                        iterations);
 
                     return Results.Ok(result);
                 })

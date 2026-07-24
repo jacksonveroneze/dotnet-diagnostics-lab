@@ -34,7 +34,7 @@ const TOTAL_STEPS = Number(__ENV.STEPS || 6);
 const STEP_DURATION_SECONDS = Number(__ENV.STEP_DURATION || 10);
 
 const TEST_CASES = {
-    "memory-string-allocation": {path: "memory/string-allocation", params: {iterations: 10, stringLength: 250}},
+    "memory-string-allocation": {path: "memory/string-allocation", params: {iterations: 50}},
     "memory-leak-static": {path: "memory/leak-static", params: {objectCount: 200, objectSizeBytes: 500}},
     "memory-loh-pressure": {path: "memory/loh-pressure", params: {objectCount: 200, objectSizeBytes: 100000}},
     "memory-leak-event": {path: "memory/leak-event", params: {subscriberCount: 100, payloadSizeBytes: 500}},

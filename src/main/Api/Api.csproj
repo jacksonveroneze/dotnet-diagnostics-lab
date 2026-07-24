@@ -21,6 +21,8 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
 
+    <PackageReference Include="Bogus" />
+
   </ItemGroup>
 
 </Project>
