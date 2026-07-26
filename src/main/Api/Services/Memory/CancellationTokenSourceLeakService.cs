@@ -32,7 +32,6 @@ public class CancellationTokenSourceLeakService : ICancellationTokenSourceLeakSe
     {
         var tasks = new List<Task>(taskCount);
 
-#pragma warning disable CA2000, S2930 // Intentional: simulates CancellationTokenSource instances that are never disposed.
         for (var i = 0; i < taskCount; i++)
         {
             var cts = new CancellationTokenSource(TimeSpan.FromHours(1));
@@ -42,7 +41,6 @@ public class CancellationTokenSourceLeakService : ICancellationTokenSourceLeakSe
             tasks.Add(Task.Run(()
                 => Task.Delay(delayMs, linkedCts.Token), linkedCts.Token));
         }
-#pragma warning restore CA2000, S2930
 
         await Task.WhenAll(tasks);
     }

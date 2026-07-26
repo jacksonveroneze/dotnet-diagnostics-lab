@@ -3,9 +3,10 @@
 API de laboratório para simular cenários de diagnóstico de performance e memória em .NET
 (alta alocação, promoção para Gen2, pressão na LOH, memory leak estático, event handler leak,
 cache sem expiração, closure capturando referências, CancellationTokenSource não disposto,
-Timer nunca parado, thread pool starvation, thread leak, lock contention e CPU-bound),
-permitindo observar o comportamento via ferramentas de diagnóstico (dotnet-counters,
-dotnet-trace, dotnet-gcdump, profilers, etc.).
+Timer nunca parado, thread pool starvation, thread leak, lock contention, CPU-bound e
+exaustão de sockets HTTP por `new HttpClient()` por request), permitindo observar o
+comportamento via ferramentas de diagnóstico (dotnet-counters, dotnet-trace, dotnet-gcdump,
+profilers, etc.).
 
 ## Executando
 
@@ -332,4 +333,33 @@ Exemplo:
 ```
 GET /diagnostics/v1/exception/throw?type=Argument
 GET /diagnostics/v1/exception/throw?type=Unhandled
+```
+
+---
+
+## Io (`diagnostics/v1/io`)
+
+Simulações relacionadas a operações de I/O (rede, sockets, arquivos).
+
+### `GET /diagnostics/v1/io/leak-http-client`
+
+Simula o anti-pattern de instanciar `new HttpClient()` a cada chamada em vez de reutilizar
+uma instância via `IHttpClientFactory` ou singleton: dispara `requestCount` chamadas HTTP em
+paralelo, cada uma com um `HttpClient` novo, descartado ao final. Cada `HttpClient` descartado
+deixa a conexão TCP subjacente em `TIME_WAIT` por ~4 minutos; sob carga sustentada isso esgota
+as portas efêmeras do SO, produzindo `SocketException` e latência crescente — sintoma que no
+dotTrace aparece como threads presas em abertura de conexão/DNS (I/O), não como CPU ou lock.
+Por padrão, as chamadas são feitas contra o próprio endpoint `/health` da aplicação (host/porta
+resolvidos a partir da request recebida); é possível apontar para outra URL via `targetUrl`.
+
+| Parâmetro     | Tipo   | Obrigatório | Min | Max  | Descrição                                             |
+|---------------|--------|-------------|-----|------|----------------------------------------------------------|
+| `requestCount`| int    | Sim         | 1   | 1000 | Quantidade de chamadas HTTP disparadas em paralelo.       |
+| `targetUrl`   | string | Não         | -   | -    | URL absoluta http(s) de destino. Default: `/health` da própria aplicação. |
+
+Exemplo:
+
+```
+GET /diagnostics/v1/io/leak-http-client?requestCount=50
+GET /diagnostics/v1/io/leak-http-client?requestCount=50&targetUrl=http://localhost:7000/health
 ```
