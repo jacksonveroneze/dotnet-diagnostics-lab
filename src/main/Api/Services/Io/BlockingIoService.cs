@@ -11,11 +11,10 @@ public class BlockingIoService : IBlockingIoService
     private const int MinDelayMs = 1;
     private const int MaxDelayMs = 10_000;
 
-    private const string DelayEndpointBaseUrl = "http://localhost:7000/diagnostics/v1/io/delay";
-
     public SimulationResult Run(
         int taskCount,
-        int delayMs)
+        int delayMs,
+        Uri targetUri)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(taskCount, MinTaskCount);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(taskCount, MaxTaskCount);
@@ -23,16 +22,17 @@ public class BlockingIoService : IBlockingIoService
         ArgumentOutOfRangeException.ThrowIfGreaterThan(delayMs, MaxDelayMs);
 
         return SimulationRunner.Run(()
-            => InternalRun(taskCount, delayMs));
+            => InternalRun(taskCount, delayMs, targetUri));
     }
 
     private static void InternalRun(
-        int taskCount, int delayMs)
+        int taskCount, int delayMs, Uri targetUri)
     {
-        var targetUri = new Uri($"{DelayEndpointBaseUrl}?delayMs={delayMs}");
+        var callUri = new Uri($"{targetUri}?delayMs={delayMs}");
 
         var tasks = Enumerable.Range(0, taskCount)
-            .Select(_ => Task.Run(() => BlockOnHttpCall(targetUri)));
+            .Select(_ => Task.Run(() => BlockOnHttpCall(callUri)))
+            .ToArray();
 
         // Anti-pattern intencional: espera síncrona sobre as tasks, refletindo o mesmo
         // bloqueio de thread do ThreadPool que cada uma delas já faz internamente.

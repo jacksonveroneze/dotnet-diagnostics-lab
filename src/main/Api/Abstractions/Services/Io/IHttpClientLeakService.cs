@@ -6,5 +6,6 @@ public interface IHttpClientLeakService
 {
     public Task<SimulationResult> RunAsync(
         int requestCount,
+        Uri targetUri,
         CancellationToken cancellationToken);
 }

@@ -6,5 +6,6 @@ public interface IBlockingIoService
 {
     public SimulationResult Run(
         int taskCount,
-        int delayMs);
+        int delayMs,
+        Uri targetUri);
 }

@@ -9,18 +9,16 @@ public class HttpClientLeakService : IHttpClientLeakService
     private const int MinRequestCount = 1;
     private const int MaxRequestCount = 1_000;
 
-    private const string TargetUri = "http://localhost:7000/health";
-    private readonly Uri _targetUriInstance = new(TargetUri, UriKind.RelativeOrAbsolute);
-
     public async Task<SimulationResult> RunAsync(
         int requestCount,
+        Uri targetUri,
         CancellationToken cancellationToken)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(requestCount, MinRequestCount);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(requestCount, MaxRequestCount);
 
         return await SimulationRunner.RunAsync(()
-            => InternalRunAsync(_targetUriInstance,
+            => InternalRunAsync(targetUri,
                 requestCount, cancellationToken));
     }
 

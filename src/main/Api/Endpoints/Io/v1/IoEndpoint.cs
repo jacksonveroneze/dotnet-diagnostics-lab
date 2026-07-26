@@ -38,12 +38,18 @@ internal static class IoEndpoint
         {
             builder.MapGet("leak-http-client", async (
                     [FromServices] IHttpClientLeakService service,
-                    HttpContext httpContext,
                     int requestCount,
+                    string targetUrl,
                     CancellationToken cancellationToken) =>
                 {
+                    if (!Uri.TryCreate(targetUrl, UriKind.Absolute, out Uri? targetUri))
+                    {
+                        throw new ArgumentException(
+                            "targetUrl must be an absolute URL.", nameof(targetUrl));
+                    }
+
                     SimulationResult result = await service.RunAsync(
-                        requestCount, cancellationToken);
+                        requestCount, targetUri, cancellationToken);
 
                     return Results.Ok(result);
                 })
@@ -58,9 +64,16 @@ internal static class IoEndpoint
             builder.MapGet("blocking-sync", (
                     [FromServices] IBlockingIoService service,
                     int taskCount,
-                    int delayMs) =>
+                    int delayMs,
+                    string targetUrl) =>
                 {
-                    SimulationResult result = service.Run(taskCount, delayMs);
+                    if (!Uri.TryCreate(targetUrl, UriKind.Absolute, out Uri? targetUri))
+                    {
+                        throw new ArgumentException(
+                            "targetUrl must be an absolute URL.", nameof(targetUrl));
+                    }
+
+                    SimulationResult result = service.Run(taskCount, delayMs, targetUri);
 
                     return Results.Ok(result);
                 })
