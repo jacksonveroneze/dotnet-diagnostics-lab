@@ -21,6 +21,7 @@ public static class AppServicesExtensions
         services.AddSingleton<IMemoryLeakStaticService, MemoryLeakStaticService>();
         services.AddScoped<IStringAllocationService, StringAllocationService>();
         services.AddScoped<ILohPressureService, LohPressureService>();
+        services.AddScoped<IBlockingGcService, BlockingGcService>();
         services.AddSingleton<IEventLeakService, EventLeakService>();
         services.AddScoped<ICacheLeakService, CacheLeakService>();
         services.AddSingleton<IClosureLeakService, ClosureLeakService>();

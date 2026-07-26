@@ -33,6 +33,7 @@ internal static class MemoryEndpoint
             .AddClosureLeakEndpoint()
             .AddCancellationTokenSourceLeakEndpoint()
             .AddTimerLeakEndpoint()
+            .AddBlockingGcEndpoint()
             .AddGcCleanEndpoint();
 
         return app;
@@ -184,6 +185,24 @@ internal static class MemoryEndpoint
             return builder;
         }
         
+        private RouteGroupBuilder AddBlockingGcEndpoint()
+        {
+            builder.MapGet("blocking-gc", (
+                    [FromServices] IBlockingGcService service,
+                    int iterations,
+                    int survivorCount) =>
+                {
+                    SimulationResult result = service.Run(
+                        iterations, survivorCount);
+
+                    return Results.Ok(result);
+                })
+                .Produces<SimulationResult>()
+                .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status500InternalServerError);
+            return builder;
+        }
+
         private RouteGroupBuilder AddGcCleanEndpoint()
         {
             builder.MapGet("gc-clean", () =>
