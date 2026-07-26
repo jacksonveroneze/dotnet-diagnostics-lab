@@ -37,6 +37,7 @@ public static class AppServicesExtensions
         services.AddScoped<IExceptionSimulationService, ExceptionSimulationService>();
 
         services.AddScoped<IHttpClientLeakService, HttpClientLeakService>();
+        services.AddScoped<IBlockingIoService, BlockingIoService>();
 
         return services;
     }

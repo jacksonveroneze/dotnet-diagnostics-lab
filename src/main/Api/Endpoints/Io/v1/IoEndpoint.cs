@@ -25,7 +25,9 @@ internal static class IoEndpoint
                 .WithApiVersionSet(apiVersion)
                 .MapToApiVersion(Version);
 
-        builder.AddHttpClientLeakEndpoint();
+        builder.AddHttpClientLeakEndpoint()
+            .AddBlockingIoEndpoint()
+            .AddDelayEndpoint();
 
         return app;
     }
@@ -48,6 +50,36 @@ internal static class IoEndpoint
                 .Produces<SimulationResult>()
                 .Produces(StatusCodes.Status400BadRequest)
                 .Produces(StatusCodes.Status500InternalServerError);
+            return builder;
+        }
+
+        private RouteGroupBuilder AddBlockingIoEndpoint()
+        {
+            builder.MapGet("blocking-sync", (
+                    [FromServices] IBlockingIoService service,
+                    int taskCount,
+                    int delayMs) =>
+                {
+                    SimulationResult result = service.Run(taskCount, delayMs);
+
+                    return Results.Ok(result);
+                })
+                .Produces<SimulationResult>()
+                .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status500InternalServerError);
+            return builder;
+        }
+
+        private RouteGroupBuilder AddDelayEndpoint()
+        {
+            builder.MapGet("delay", async (
+                    int delayMs,
+                    CancellationToken cancellationToken) =>
+                {
+                    await Task.Delay(delayMs, cancellationToken);
+
+                    return Results.Ok();
+                });
             return builder;
         }
     }
