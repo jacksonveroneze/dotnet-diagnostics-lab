@@ -13,6 +13,7 @@ readonly TEST_TYPES=(
   memory-leak-closure
   memory-leak-cancellation-token-source
   memory-leak-timer
+  memory-blocking-gc
   thread-pool-starvation
   thread-leak
   thread-lock-contention
@@ -20,6 +21,8 @@ readonly TEST_TYPES=(
   cpu-regex-backtracking
   exception-argument
   exception-unhandled
+  io-leak-http-client
+  io-blocking-sync
 )
 
 usage() {

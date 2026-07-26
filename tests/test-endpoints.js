@@ -42,6 +42,7 @@ const TEST_CASES = {
     "memory-leak-closure": {path: "memory/leak-closure", params: {objectCount: 50, objectSizeBytes: 100000}},
     "memory-leak-cancellation-token-source": {path: "memory/leak-cancellation-token-source", params: {delayMs: 10000, taskCount: 2}},
     "memory-leak-timer": {path: "memory/leak-timer", params: {timerCount: 500, intervalMs: 3600000}},
+    "memory-blocking-gc": {path: "memory/blocking-gc", params: {iterations: 20, survivorCount: 500}},
     "thread-pool-starvation": {path: "thread/thread-pool-starvation", params: {delayMs: 5000, taskCount: 1}},
     "thread-leak": {path: "thread/thread-leak", params: {delayMs: 10000, taskCount: 2}},
     "thread-lock-contention": {path: "thread/lock-contention", params: {delayMs: 10000, taskCount: 2}},
@@ -49,7 +50,8 @@ const TEST_CASES = {
     "cpu-regex-backtracking": {path: "cpu/regex-backtracking", params: {inputLength: 25}},
     "exception-argument": {path: "exception/throw", params: {type: "Argument"}, expectedStatus: 400},
     "exception-unhandled": {path: "exception/throw", params: {type: "Unhandled"}, expectedStatus: 500},
-    "io-leak-http-client": {path: "io/leak-http-client", params: {requestCount: 50}}
+    "io-leak-http-client": {path: "io/leak-http-client", params: {requestCount: 50, targetUrl: `${BASE_URL}/${BASE_PATH}health`}},
+    "io-blocking-sync": {path: "io/blocking-sync", params: {taskCount: 5, delayMs: 1000, targetUrl: `${BASE_URL}/${BASE_PATH}diagnostics/v1/io/delay`}}
 };
 
 function buildUrl({path, params}) {
