@@ -1,10 +1,12 @@
 using System.Diagnostics.CodeAnalysis;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Cpu;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Exception;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Io;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Memory;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Abstractions.Services.Thread;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Cpu;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Exception;
+using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Io;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Memory;
 using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Threads;
 
@@ -19,6 +21,7 @@ public static class AppServicesExtensions
         services.AddSingleton<IMemoryLeakStaticService, MemoryLeakStaticService>();
         services.AddScoped<IStringAllocationService, StringAllocationService>();
         services.AddScoped<ILohPressureService, LohPressureService>();
+        services.AddScoped<IBlockingGcService, BlockingGcService>();
         services.AddSingleton<IEventLeakService, EventLeakService>();
         services.AddScoped<ICacheLeakService, CacheLeakService>();
         services.AddSingleton<IClosureLeakService, ClosureLeakService>();
@@ -33,6 +36,9 @@ public static class AppServicesExtensions
         services.AddScoped<IRegexBacktrackingService, RegexBacktrackingService>();
 
         services.AddScoped<IExceptionSimulationService, ExceptionSimulationService>();
+
+        services.AddScoped<IHttpClientLeakService, HttpClientLeakService>();
+        services.AddScoped<IBlockingIoService, BlockingIoService>();
 
         return services;
     }

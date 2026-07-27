@@ -16,7 +16,7 @@ internal static class WebApplicationBuilderExtensions
 
             builder.ConfigureDefaultServices(appConfiguration);
 
-            //builder.AddLogger(appConfiguration);
+            builder.AddLogger(appConfiguration);
 
             return builder;
         }

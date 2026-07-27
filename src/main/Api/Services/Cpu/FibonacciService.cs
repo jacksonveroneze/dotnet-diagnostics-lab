@@ -4,7 +4,8 @@ using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Models;
 
 namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Cpu;
 
-public class FibonacciService : IFibonacciService
+public class FibonacciService 
+    : IFibonacciService
 {
     private const int MinValue = 1;
     private const int MaxValue = 40;

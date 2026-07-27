@@ -44,7 +44,6 @@ public class ClosureLeakService : IClosureLeakService
         }
     }
 
-#pragma warning disable CA1001 // Intentional: simulates a Timer-owning type that is never disposed.
     private sealed class DataProcessor
     {
         private readonly byte[] _largeData;
@@ -58,12 +57,9 @@ public class ClosureLeakService : IClosureLeakService
             _timer.Start();
         }
 
-#pragma warning disable S1144 // Intentional: never invoked, matches the timer-never-stopped scenario being simulated.
         public void Stop()
         {
             _timer.Stop();
         }
-#pragma warning restore S1144
     }
-#pragma warning restore CA1001
 }

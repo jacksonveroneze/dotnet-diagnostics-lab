@@ -3,7 +3,8 @@ using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Enums;
 
 namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Exception;
 
-public class ExceptionSimulationService : IExceptionSimulationService
+public class ExceptionSimulationService 
+    : IExceptionSimulationService
 {
     public void Run(
         ExceptionSimulationType type)

@@ -5,7 +5,8 @@ using JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Models;
 
 namespace JacksonVeroneze.NET.DotnetDiagnosticsLab.Api.Services.Cpu;
 
-public partial class RegexBacktrackingService : IRegexBacktrackingService
+public partial class RegexBacktrackingService 
+    : IRegexBacktrackingService
 {
     private const int MinValue = 1;
     private const int MaxValue = 30;
@@ -27,8 +28,6 @@ public partial class RegexBacktrackingService : IRegexBacktrackingService
         VulnerablePattern().IsMatch(input);
     }
 
-#pragma warning disable MA0009 // Intentional: simulates a regex vulnerable to catastrophic backtracking (ReDoS).
     [GeneratedRegex("^(a+)+$")]
     private static partial Regex VulnerablePattern();
-#pragma warning restore MA0009
 }

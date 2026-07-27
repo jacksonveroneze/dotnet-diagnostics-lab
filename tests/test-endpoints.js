@@ -1,10 +1,10 @@
 import {factoryHeaders, runner} from "./util.js";
 
-const BASE_URL = __ENV.BASE_URL || "http://localhost:7000";
-const BASE_PATH = __ENV.BASE_URL || "";
+//const BASE_URL = __ENV.BASE_URL || "http://localhost:7000";
+//const BASE_PATH = __ENV.BASE_URL || "";
 
-//const BASE_URL = __ENV.BASE_URL || "http://10.0.0.150:8080";
-//const BASE_PATH = __ENV.BASE_URL || "dotnet-diagnostics-lab/";
+const BASE_URL = __ENV.BASE_URL || "http://10.0.0.150:8080";
+const BASE_PATH = __ENV.BASE_URL || "dotnet-diagnostics-lab/";
 
 //const BASE_URL = __ENV.BASE_URL || "http://10.0.0.195:8080";
 //const BASE_PATH = __ENV.BASE_URL || "dotnet-diagnostics-lab/";
@@ -28,27 +28,30 @@ const PRE_VUS = Number(__ENV.PRE_VUS || 100);
 const MAX_VUS = Number(__ENV.MAX_VUS || 500);
 
 // Carga
-const START_RPS = Number(__ENV.START_RPS || 15);
+const START_RPS = Number(__ENV.START_RPS || 10);
 const STEP_RPS = Number(__ENV.STEP_RPS || 50);
-const TOTAL_STEPS = Number(__ENV.STEPS || 6);
+const TOTAL_STEPS = Number(__ENV.STEPS || 5);
 const STEP_DURATION_SECONDS = Number(__ENV.STEP_DURATION || 10);
 
 const TEST_CASES = {
     "memory-string-allocation": {path: "memory/string-allocation", params: {iterations: 50}},
     "memory-leak-static": {path: "memory/leak-static", params: {objectCount: 200, objectSizeBytes: 500}},
-    "memory-loh-pressure": {path: "memory/loh-pressure", params: {objectCount: 200, objectSizeBytes: 100000}},
+    "memory-loh-pressure": {path: "memory/loh-pressure", params: {objectCount: 2000, objectSizeBytes: 5242880}},
     "memory-leak-event": {path: "memory/leak-event", params: {subscriberCount: 100, payloadSizeBytes: 500}},
     "memory-leak-cache": {path: "memory/leak-cache", params: {objectCount: 10, objectSizeBytes: 5000}},
     "memory-leak-closure": {path: "memory/leak-closure", params: {objectCount: 50, objectSizeBytes: 100000}},
     "memory-leak-cancellation-token-source": {path: "memory/leak-cancellation-token-source", params: {delayMs: 10000, taskCount: 2}},
     "memory-leak-timer": {path: "memory/leak-timer", params: {timerCount: 500, intervalMs: 3600000}},
-    "thread-pool-starvation": {path: "thread/thread-pool-starvation", params: {delayMs: 10000, taskCount: 2}},
+    "memory-blocking-gc": {path: "memory/blocking-gc", params: {iterations: 20, survivorCount: 500}},
+    "thread-pool-starvation": {path: "thread/thread-pool-starvation", params: {delayMs: 5000, taskCount: 1}},
     "thread-leak": {path: "thread/thread-leak", params: {delayMs: 10000, taskCount: 2}},
     "thread-lock-contention": {path: "thread/lock-contention", params: {delayMs: 10000, taskCount: 2}},
-    "cpu-fibonacci": {path: "cpu/fibonacci", params: {sequencePosition: 32}},
+    "cpu-fibonacci": {path: "cpu/fibonacci", params: {sequencePosition: 40}},
     "cpu-regex-backtracking": {path: "cpu/regex-backtracking", params: {inputLength: 25}},
     "exception-argument": {path: "exception/throw", params: {type: "Argument"}, expectedStatus: 400},
-    "exception-unhandled": {path: "exception/throw", params: {type: "Unhandled"}, expectedStatus: 500}
+    "exception-unhandled": {path: "exception/throw", params: {type: "Unhandled"}, expectedStatus: 500},
+    "io-leak-http-client": {path: "io/leak-http-client", params: {requestCount: 1000, targetUrl: 'http://localhost:3001'}},
+    "io-blocking-sync": {path: "io/blocking-sync", params: {taskCount: 5, delayMs: 1000, targetUrl: 'http://localhost:3001'}}
 };
 
 function buildUrl({path, params}) {
