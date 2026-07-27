@@ -39,7 +39,10 @@ public class HttpClientLeakService : IHttpClientLeakService
         Uri targetUri,
         CancellationToken cancellationToken)
     {
-        using var httpClient = new HttpClient();
+        using var httpClient = new HttpClient()
+        {
+            Timeout = TimeSpan.FromSeconds(10)
+        };
 
         using HttpResponseMessage response =
             await httpClient.GetAsync(targetUri, cancellationToken);

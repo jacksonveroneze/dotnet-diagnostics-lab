@@ -14,22 +14,29 @@ public class BlockingIoService : IBlockingIoService
     public SimulationResult Run(
         int taskCount,
         int delayMs,
-        Uri targetUri)
+        string targetUrl)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(taskCount, MinTaskCount);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(taskCount, MaxTaskCount);
         ArgumentOutOfRangeException.ThrowIfLessThan(delayMs, MinDelayMs);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(delayMs, MaxDelayMs);
 
+        if (!Uri.TryCreate(targetUrl, UriKind.Absolute, out Uri? targetUri))
+        {
+            throw new ArgumentException(
+                "targetUrl must be an absolute URL.", nameof(targetUrl));
+        }
+
+        var callUri = new Uri($"{targetUri}?delayMs={delayMs}");
+
         return SimulationRunner.Run(()
-            => InternalRun(taskCount, delayMs, targetUri));
+            => InternalRun(taskCount, callUri));
     }
 
     private static void InternalRun(
-        int taskCount, int delayMs, Uri targetUri)
+        int taskCount,
+        Uri callUri)
     {
-        var callUri = new Uri($"{targetUri}?delayMs={delayMs}");
-
         var tasks = Enumerable.Range(0, taskCount)
             .Select(_ => Task.Run(() => BlockOnHttpCall(callUri)))
             .ToArray();
@@ -42,7 +49,10 @@ public class BlockingIoService : IBlockingIoService
     private static void BlockOnHttpCall(
         Uri targetUri)
     {
-        using var httpClient = new HttpClient();
+        using var httpClient = new HttpClient()
+        {
+            Timeout = TimeSpan.FromSeconds(10)
+        };
 
         // Anti-pattern intencional: bloqueia a worker thread do ThreadPool em I/O síncrono
         // (sync-over-async) em vez de manter o pipeline assíncrono ponta a ponta.

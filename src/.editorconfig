@@ -125,6 +125,7 @@ dotnet_diagnostic.S1215.severity = none
 dotnet_diagnostic.CA2000.severity = none
 dotnet_diagnostic.S2930.severity = none
 dotnet_diagnostic.MA0009.severity = none
+dotnet_diagnostic.CA1054.severity = none
 dotnet_diagnostic.S1075.severity = none
 dotnet_diagnostic.VSTHRD002.severity = none
 

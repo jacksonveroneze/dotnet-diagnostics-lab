@@ -157,8 +157,7 @@ services:
       - "52323:52323"
       - "52325:52325"
     volumes:
-      #- ./monitor-data/diag:/tmp/diag
-      - /tmp/diag:/tmp/diag
+      - ./monitor-data/diag:/tmp/diag
     networks:
       - dotnet-diagnostics-lab-service-public
       - dotnet-diagnostics-lab-service-internal

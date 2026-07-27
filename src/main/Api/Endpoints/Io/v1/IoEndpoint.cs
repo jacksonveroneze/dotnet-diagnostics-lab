@@ -67,13 +67,8 @@ internal static class IoEndpoint
                     int delayMs,
                     string targetUrl) =>
                 {
-                    if (!Uri.TryCreate(targetUrl, UriKind.Absolute, out Uri? targetUri))
-                    {
-                        throw new ArgumentException(
-                            "targetUrl must be an absolute URL.", nameof(targetUrl));
-                    }
-
-                    SimulationResult result = service.Run(taskCount, delayMs, targetUri);
+                    SimulationResult result = service.Run(
+                        taskCount, delayMs, targetUrl);
 
                     return Results.Ok(result);
                 })

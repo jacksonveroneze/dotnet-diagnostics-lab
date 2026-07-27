@@ -31,7 +31,7 @@ RUN dotnet publish ./main/Api/Api.csproj \
 # =====================================================
 # Etapa Final: Imagem de Runtime
 # =====================================================
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS runtime
 
 ENV ASPNETCORE_ENVIRONMENT=Production \
     DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
